@@ -6,6 +6,14 @@ export enum Role {
     Admin = 'admin'
 }
 
+export interface BaseUserDetails {
+    username: string;
+    email: string;
+    role: Role;
+    password: string;
+    confirmPassword: string;
+}
+
 export interface BaseUser extends Document {
     _id: mongoose.Types.ObjectId;
     username: string;
@@ -43,4 +51,12 @@ export interface AdminDashStats {
     tutorCounts: number;
     problemCounts: number;
     courseCounts: number;
+}
+
+export interface DecodeResetPasswordType {
+    email: string;
+    id: string;
+    role: Role;
+    iat: number;
+    exp: number;
 }
