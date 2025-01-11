@@ -1,9 +1,9 @@
-import { Model, Document } from 'mongoose';
+import { Model, Document, FilterQuery } from 'mongoose';
 import { IAuthRepository } from './IAuthRepository';
 import { BaseRepository } from '../base/baseRepository';
 import { Role } from '../../types/commonTypes';
-import { IUser } from '../../types/userTypes';
-import { ITutor } from '../../types/tutorTypes';
+import { IUser, UserFilterQuery } from '../../types/userTypes';
+import { ITutor, TutorFilterQuery } from '../../types/tutorTypes';
 import { inject, injectable } from 'inversify';
 
 
@@ -45,12 +45,30 @@ export class AuthRepository extends BaseRepository<IUser | ITutor> implements IA
         return null;
     }
 
-    async findByUsers(filter: any = {}): Promise<IUser[]> {
-        return this.userModel.find(filter).sort({ createdAt: -1 }).exec();
+    async findByUsers(filter: UserFilterQuery = {}): Promise<IUser[]> {
+        let query: FilterQuery<ITutor & Document> = {};
+        if(filter?.searchTerm?.trim()){
+            const searchTerm = filter.searchTerm.trim()
+
+            query.$or = [
+                {fullname: {$regex: new RegExp(searchTerm, 'i')}},
+                {username: {$regex: new RegExp(searchTerm, 'i')}}
+            ];
+        }
+        return this.userModel.find(query).sort({ createdAt: -1 }).exec();
     }
 
-    async findByTutors(filter: any = {}): Promise<ITutor[]> {
-        return this.tutorModel.find(filter).sort({ createdAt: -1 }).exec();
+    async findByTutors(filter: TutorFilterQuery = {}): Promise<ITutor[]> {
+        let query: FilterQuery<ITutor & Document> = {};
+        if(filter?.searchTerm?.trim()){
+            const searchTerm = filter.searchTerm.trim()
+
+            query.$or = [
+                {fullname: {$regex: new RegExp(searchTerm, 'i')}},
+                {username: {$regex: new RegExp(searchTerm, 'i')}}
+            ];
+        }
+        return this.tutorModel.find(query).sort({ createdAt: -1 }).exec();
     }
 
     async checkRole(email: string, roleId: Role): Promise<IUser | ITutor | null> {
