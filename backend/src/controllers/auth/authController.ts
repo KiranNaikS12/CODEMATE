@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { AuthService } from "../../services/authService/authService";
 import { HttpStatusCode } from "../../utils/httpStatusCode";
 import { AuthMessages } from "../../utils/message";
 import { formatResponse } from "../../utils/responseFormatter";
