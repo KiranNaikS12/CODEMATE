@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import { IAuthRepository } from "../../repositories/auth/IAuthRepository";
 import bcrypt from 'bcryptjs';
 import { generateOTP } from "../../utils/otpGenerator";
-import jwt from 'jsonwebtoken';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
 import generateToken from "../../utils/generateToken";
 import { AuthMessages } from "../../utils/message";
 import { injectable, inject } from "inversify";
-import { Role } from "../../types/commonTypes";
+import { BaseUserDetails, DecodeResetPasswordType, Role } from "../../types/commonTypes";
 import { CustomError } from '../../utils/customError';
 import { HttpStatusCode } from '../../utils/httpStatusCode';
 import { IUser } from '../../types/userTypes';
@@ -29,13 +29,14 @@ export class AuthService implements IAuthService {
         this.tokenBlacklistServie = tokenBlacklistServie
     }
 
-    async initiateRegistration(userDetails:any, res:Response) : Promise< {token: string}> {
-       const exisitingUserName = await this.AuthRepository.findByUserName(userDetails.username, userDetails.roleId);
+    async initiateRegistration(userDetails: BaseUserDetails, res:Response) : Promise< {token: string}> {
+       console.log(userDetails)
+       const exisitingUserName = await this.AuthRepository.findByUserName(userDetails.username, userDetails.role);
        if(exisitingUserName) {
          throw new CustomError(AuthMessages.USERNAME_ALREADY_TAKEN, HttpStatusCode.BAD_REQUEST)
        }
 
-       const exisitingUserByEmail = await this.AuthRepository.checkExistingEmail(userDetails.email,userDetails.roleId);
+       const exisitingUserByEmail = await this.AuthRepository.checkExistingEmail(userDetails.email,userDetails.role);
        if(exisitingUserByEmail) {
          throw new CustomError(AuthMessages.EMAIL_ALREADY_REGISTERED,HttpStatusCode.BAD_REQUEST)
        }
@@ -58,7 +59,7 @@ export class AuthService implements IAuthService {
             const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {userDetails: Partial<IUser | ITutor>, otp:string}
 
             if(decoded.otp !== otp){
-                throw new Error(AuthMessages.INVALID_OTP)
+                throw new CustomError(AuthMessages.INVALID_OTP, HttpStatusCode.BAD_REQUEST)
             }
             
             const hashPassword = await bcrypt.hash(decoded.userDetails.password!, 10)
@@ -75,17 +76,19 @@ export class AuthService implements IAuthService {
             generateToken(res, newUser._id.toString(), newUser.roleId);
             return newUser;
 
-        }catch(err:any) {
-            if (err.message === AuthMessages.INVALID_OTP) {
-                throw err; 
+        }catch(error) {
+            if (error instanceof CustomError) {
+                throw error;
             }
             throw new CustomError(AuthMessages.FAILED_TO_VERIFY_USER, HttpStatusCode.UNAUTHORIZED)
         }    
     }
 
 
-    async googleAuthUser(userDetails: any, res:Response) : Promise<IUser | ITutor | undefined> {
+    async googleAuthUser(userDetails: BaseUserDetails, res:Response) : Promise<IUser | ITutor | undefined> {
         const exisitingUser = await this.AuthRepository.findByEmail(userDetails.email);
+        console.log("exisitingUser", exisitingUser?.roleId)
+        console.log("userDetails", userDetails.role)
         if(exisitingUser) {
             if( exisitingUser.roleId !== userDetails.role) {
                 throw new CustomError(AuthMessages.INVALID_ROLE,HttpStatusCode.BAD_REQUEST)
@@ -175,27 +178,41 @@ export class AuthService implements IAuthService {
 
     async validateResetToken(id: string, token:string) : Promise<void> {
         try {
-            const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodeResetPasswordType;
+            
             if (decoded.id !== id) {
                 throw new CustomError(AuthMessages.INVALID_TOKEN, HttpStatusCode.BAD_REQUEST);
             }
         } catch (error) {
-            throw new CustomError(AuthMessages.INVALID_TOKEN, HttpStatusCode.BAD_REQUEST);
+            if (error instanceof TokenExpiredError) {
+                throw new CustomError(AuthMessages.RESET_LINK_EXPIRED, HttpStatusCode.UNAUTHORIZED);
+            }
+            throw new CustomError(AuthMessages.RESET_LINK_EXPIRED, HttpStatusCode.BAD_REQUEST);
         }
     }
 
     async resetPassword(id:string, token:string, password:string): Promise<void> {
-        const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+        await this.validateResetToken(id, token)
+        
+        console.log('inside reset password')
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodeResetPasswordType;
+        
         const userData = await this.AuthRepository.checkRole(decoded.email, decoded.role);
         if(!userData){
             throw new CustomError(AuthMessages.USER_NOT_FOUND,HttpStatusCode.NOT_FOUND)
         }
-        await this.validateResetToken(id, token)
+        
         const hashPassword = await bcrypt.hash(password, 10);
 
         try {
             await this.AuthRepository.update(id, {password:hashPassword});
         } catch (error) {
+            if(error instanceof CustomError){
+                throw error;
+            }
+            if (error instanceof TokenExpiredError) {
+                throw new CustomError(AuthMessages.RESET_LINK_EXPIRED, HttpStatusCode.UNAUTHORIZED);
+            }
             throw new CustomError(AuthMessages.PASSWORD_RESET_FAILED, HttpStatusCode.BAD_REQUEST)
         }
     }
