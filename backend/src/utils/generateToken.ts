@@ -13,7 +13,7 @@ const generateToken = async (res: Response, userId: string, roleId: Role): Promi
         }
 
         const token = jwt.sign({ userId, roleId } as JwtPayload, process.env.JWT_SECRET, {
-            expiresIn: '5m',
+            expiresIn: '2d',
         });
 
         const refreshToken = jwt.sign({userId, roleId} as JwtPayload, process.env.JWT_REFRESH_SECRET, {
@@ -27,7 +27,7 @@ const generateToken = async (res: Response, userId: string, roleId: Role): Promi
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 15 * 60 * 1000
+            maxAge: 2 * 24 * 60 * 60 * 1000
         });
 
         res.cookie(refreshCookieName, refreshToken, {
