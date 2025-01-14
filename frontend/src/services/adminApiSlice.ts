@@ -26,17 +26,26 @@ export const adminApiSlice = createApi({
                 method: 'POST'
             })
         }),
-        listUsers: builder.query<ListUsersResponse, void>({
-            query:() => ({
-                url:'/admin/listuser',
-                method:'GET'
-            }),
+        listUsers: builder.query<ListUsersResponse, FilterData>({
+            query:({searchTerm}) => {
+                let queryString = '';
+                if(searchTerm) queryString += `searchTerm=${searchTerm.toLowerCase()}&`;
+                return {
+                    url:`/admin/listuser?${queryString}`,
+                    method:'GET'
+                }
+            },
         }),
-        listInstructors: builder.query<ListTutorResponse, void>({
-            query:() => ({
-                url:'/admin/listtutors',
-                method:'GET'
-            })
+        listInstructors: builder.query<ListTutorResponse, FilterData>({
+            query: ({searchTerm}) => {
+                let queryString = '';
+                if(searchTerm) queryString += `searchTerm=${searchTerm.toLowerCase()}&`;
+
+                return {
+                    url:`/admin/listtutors?${queryString}`,
+                    method:'GET'
+                }
+            }
         }),
         updateUsers: builder.mutation({
             query:({id, isBlocked}) => ({
