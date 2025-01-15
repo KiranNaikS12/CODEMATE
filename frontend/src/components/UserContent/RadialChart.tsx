@@ -2,7 +2,7 @@ import React from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import {  UserAdditional } from "../../types/userTypes";
-import { ProblemStats } from "@/types/problemTypes";
+import { ProblemStats } from "../../types/problemTypes";
 
 
 interface RadialChartProps {
