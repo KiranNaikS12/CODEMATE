@@ -8,7 +8,6 @@ import tutorRoutes from './routes/tutorRoutes';
 import adminRoutes from './routes/adminRoute';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { errorHandler } from './middleware/errorHandler';
 import { TokenBlacklistService } from './services/tokenService/tokenBlacklist';
 import { checkBlacklistedToekn } from './middleware/tokenBlacklistMiddleware';
 import { container } from './config/di-containers';
@@ -37,7 +36,7 @@ app.use('/auth', authRoute);
 app.use('/users',userRoutes);
 app.use('/tutors',tutorRoutes);
 app.use('/admin', adminRoutes);
-app.use(errorHandler);
+
 
 process.on('SIGTERM', async () => {
     await blacklistService.cleanup();
