@@ -262,7 +262,7 @@ const AddProblemForm: React.FC = () => {
                                 <FieldArray name={`testCases.${testCaseIndex}.inputs`}>
                                   {({ push: pushInput, remove: removeInput }) => (
                                     <div>
-                                      {testCase.inputs.map((input, inputIndex) => (
+                                      {testCase.inputs.map((_, inputIndex) => (
                                         <div
                                           key={inputIndex}
                                           className="flex items-center mb-2 space-x-2"
@@ -408,7 +408,7 @@ const AddProblemForm: React.FC = () => {
                       <FieldArray name="hints">
                         {({ push, remove }) => (
                           <div>
-                            {values.hints.map((hint, index: number) => (
+                            {values.hints.map((_, index: number) => (
                               <div
                                 key={index}
                                 className="p-4 mt-1 border rounded-md"
@@ -477,7 +477,7 @@ const AddProblemForm: React.FC = () => {
                         <FieldArray name={`examples.${exampleIndex}.inputs`}>
                           {({ push: pushInput, remove: removeInput }) => (
                             <div>
-                              {example.inputs.map((input, inputIndex) => (
+                              {example.inputs.map((_, inputIndex) => (
                                 <div 
                                   key={inputIndex} 
                                   className="flex items-center mb-2 space-x-2"

@@ -433,7 +433,7 @@ const EditProblemForm: React.FC = () => {
                             <FieldArray name={`examples[${index}].inputs`}>
                               {({ remove: removeInput, push: pushInput }) => (
                                 <div className="space-y-2">
-                                  {example.inputs?.map((input, inputIndex) => (
+                                  {example.inputs?.map((_, inputIndex) => (
                                     <div
                                       key={inputIndex}
                                       className="flex items-center space-x-2"
@@ -540,7 +540,7 @@ const EditProblemForm: React.FC = () => {
                 <FieldArray name="hints">
                   {({ remove, push }) => (
                     <div className="space-y-4">
-                      {values.hints.map((hint, index) => (
+                      {values.hints.map((_, index) => (
                         <div key={index} className="p-4 border rounded-lg">
                           <ErrorMessage
                             name={`hints.${index}.content`}
