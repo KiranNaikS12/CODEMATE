@@ -5,7 +5,6 @@ import { CustomError } from "../../utils/customError";
 import { IProblemRepository } from "../../repositories/problems/IProblemRepository";
 import { CodeRunTypes, CodeSubmissionResultType, FilterOptions, ProblemTypes} from "../../types/problemTypes";
 import { exec } from "child_process";
-import _ from 'lodash';
 import { IUserRepository } from "../../repositories/user/IUserRepository";
 import path from 'path';
 import fs from 'fs/promises'
