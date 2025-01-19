@@ -65,6 +65,7 @@ const TutorLogin = () => {
   };
 
   const handleGoogleSignIn = async () => {
+    console.log(window.location.origin);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
