@@ -3,7 +3,7 @@ import { AuthMessages } from "../../utils/message";
 import { HttpStatusCode } from "../../utils/httpStatusCode";
 import { CustomError } from "../../utils/customError";
 import { IProblemRepository } from "../../repositories/problems/IProblemRepository";
-import { CodeRunTypes, CodeSubmissionResultType, FilterOptions, ProblemTypes, SolvedDifficulty, TestCase } from "../../types/problemTypes";
+import { CodeRunTypes, CodeSubmissionResultType, FilterOptions, ProblemTypes} from "../../types/problemTypes";
 import { exec } from "child_process";
 import _ from 'lodash';
 import { IUserRepository } from "../../repositories/user/IUserRepository";
