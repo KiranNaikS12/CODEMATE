@@ -16,9 +16,9 @@ const RecentActivityList: React.FC<RecentActivityListProps> = ({ submissionData 
     });
 
     return (
-        <div>
-            <table className="w-full divide-y divide-customGrey">
-                <thead className="bg-customGrey">
+        <div className="px-6 mb-12 overflow-hidden sm:rounded-lg md:px-0">
+            <table className="min-w-full divide-y divide-customGrey">
+                <thead className="hidden bg-white sm:table-header-group">
                     <tr>
                         <th className="px-6 py-3 text-sm font-medium tracking-wider text-left uppercase text-themeColor">
                             Time Submitted
@@ -37,46 +37,47 @@ const RecentActivityList: React.FC<RecentActivityListProps> = ({ submissionData 
                         </th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-white bg-customGrey">
+                <tbody className="bg-gray-200 divide-y divide-white">
                     {sortedData.map((stats) => (
-                        <React.Fragment key={stats.problemId}>
-                            <tr>
-                                {/* SUBMISSION */}
-                                <td className="px-6 py-4 text-sm font-normal text-gray-500 whitespace-nowrap">
-                                    {formatToISODate(stats.submittedAt.toString())}
-                                </td>
-                                <Link to = {`/view-problem/${stats.problemId}`}>
-                                <td className="px-6 py-4 text-sm font-normal text-gray-500 cursor-pointer whitespace-nowrap hover:text-blue-500 hover:underline">
+                        <tr key={stats.problemId} className="flex flex-col mb-4 sm:table-row sm:mb-0">
+                            <td className="grid grid-cols-2 px-6 py-2 text-sm text-gray-500 sm:py-4 whitespace-nowrap sm:table-cell">
+                                <span className="font-medium sm:hidden">Time Submitted:</span>
+                                {formatToISODate(stats.submittedAt.toString())}
+                            </td>
+                            <td className="grid grid-cols-2 px-6 py-2 text-sm text-gray-500 sm:py-4 whitespace-nowrap sm:table-cell">
+                                <span className="font-medium sm:hidden ">Question:</span>
+                                <Link to={`/view-problem/${stats.problemId}`} className="cursor-pointer hover:text-blue-500 hover:underline w-[190px] whitespace-normal break-words">
                                     {stats.title}
-                                </td>
                                 </Link>
-                                <td
-                                    className={`px-6 py-4 font-bold text-sm whitespace-nowrap ${stats.status === 'Attempted'
-                                            ? 'text-red-500'
-                                            : 'text-green-500'
-                                        }`}
-                                >
+                            </td>
+                            <td className="grid grid-cols-2 px-6 py-2 text-sm sm:py-4 whitespace-nowrap sm:table-cell">
+                                <span className="font-medium sm:hidden">Status:</span>
+                                <span className={`font-bold ${
+                                    stats.status === 'Attempted' ? 'text-red-500' : 'text-green-500'
+                                }`}>
                                     {stats.status === 'Attempted' ? 'Wrong Answer' : 'Submitted'}
-                                </td>
-                                <td
-                                    className={`px-6 py-4 font-normal text-sm whitespace-nowrap ${stats.difficulty === 'easy'
-                                            ? 'text-green-500'
-                                            : stats.difficulty === 'medium'
-                                                ? 'text-yellow-500'
-                                                : 'text-red-500'
-                                        }`}
-                                >
+                                </span>
+                            </td>
+                            <td className="grid grid-cols-2 px-6 py-2 text-sm sm:py-4 whitespace-nowrap sm:table-cell">
+                                <span className="font-medium sm:hidden">Difficulty:</span>
+                                <span className={`${
+                                    stats.difficulty === 'easy'
+                                        ? 'text-green-500'
+                                        : stats.difficulty === 'medium'
+                                        ? 'text-yellow-500'
+                                        : 'text-red-500'
+                                }`}>
                                     {stats.difficulty}
-                                </td>
-                                <td className="px-6 py-4 text-sm font-normal text-gray-500 whitespace-nowrap">
-                                    {stats.language}
-                                </td>
-                            </tr>
-                        </React.Fragment>
+                                </span>
+                            </td>
+                            <td className="grid grid-cols-2 px-6 py-2 text-sm text-gray-500 sm:py-4 whitespace-nowrap sm:table-cell">
+                                <span className="font-medium sm:hidden">Language:</span>
+                                {stats.language}
+                            </td>
+                        </tr>
                     ))}
                 </tbody>
             </table>
-
         </div>
     )
 }

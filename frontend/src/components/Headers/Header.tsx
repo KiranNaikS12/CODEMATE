@@ -39,8 +39,8 @@ const Header:React.FC = () => {
 
   return (
     <>
-      <header className="flex w-full p-5 bg-customGrey gap-x-4">
-        <div className="flex-[2] rounded-lg lg:shadow-md bg-customGrey flex items-center px-2">
+      <header className="flex w-full p-5 bg-gray-200 gap-x-4">
+        <div className="flex-[2] rounded-lg lg:shadow-md bg-white flex items-center px-2">
           <div className="flex items-center gap-4">
             <FontAwesomeIcon
               icon={isSideBarOpen ? faTimes : faBars}
@@ -97,7 +97,7 @@ const Header:React.FC = () => {
         </div>
 
         {/* User controls section */}
-        <div className="flex items-center p-4 space-x-8 rounded-lg bg-customGrey md:space-x-11 text-themeColor lg:shadow-md sm:space-x-4">
+        <div className="flex items-center p-4 space-x-8 bg-white rounded-lg md:space-x-11 text-themeColor lg:shadow-md sm:space-x-4">
           <FontAwesomeIcon
             icon={faBell}
             className="text-lg md:text-xl cursor-pointer hover:text-[#247cff] hidden md:block transition-colors duration-200"
@@ -116,7 +116,7 @@ const Header:React.FC = () => {
               onClick={toggleDropDown}
             />
             {isDropdownOpen && (
-              <div className="absolute right-0 w-48 mt-2 text-current border rounded-lg shadow-lg bg-customGrey">
+              <div className="absolute right-0 w-48 mt-2 text-current bg-gray-200 border rounded-lg shadow-lg">
                 <ul className="py-2">
                   <li className="px-4 py-2 text-sm transition-colors duration-200 cursor-pointer hover:bg-themeColor hover:text-customGrey text-themeColor">
                     Appearance

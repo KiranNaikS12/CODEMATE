@@ -62,10 +62,10 @@ const UserCartPage:React.FC = () => {
         position="bottom-center"
         richColors
       />
-    <div className='flex flex-col w-full min-h-screen bg-customGrey'>
+    <div className='flex flex-col w-full min-h-screen bg-gray-200'>
         <Header/>
         <div className='flex items-end ml-36 gap-x-1'>
-            <h1 className="text-2xl font-medium text-themeColor bg-customGrey">MY CART</h1>
+            <h1 className="text-2xl font-medium bg-gray-200 text-themeColor">MY CART</h1>
             <h1 className='text-md text-highlightBlue'>
                 {cartDetails?.cartItemCount || 0} { cartDetails?.cartItemCount === 1 ? 'item' : 'items'} in your cart
             </h1>

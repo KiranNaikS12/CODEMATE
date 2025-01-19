@@ -59,7 +59,7 @@ const ViewCourse: React.FC = () => {
                 position="bottom-center"
                 richColors
             />
-            <div className="flex flex-col w-full min-h-screen bg-customGrey">
+            <div className="flex flex-col w-full min-h-screen bg-gray-200">
                 <Header />
                 <div className='flex items-center justify-center p-5 pt-0'>
                     <div className="w-full p-6 rounded-md max-w-8xl">

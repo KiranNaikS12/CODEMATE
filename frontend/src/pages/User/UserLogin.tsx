@@ -50,19 +50,16 @@ const UserLogin: React.FC = () => {
     }
   }, [navigate, userInfo]);
 
-  
-  //handling mobile div  
-  useEffect(() => {    
+  //handling mobile div
+  useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1000)
-    }
+      setIsMobile(window.innerWidth < 1000);
+    };
     checkMobile();
 
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile)
-  },[])
-
-  
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handleSubmit = async (data: FormData) => {
     try {
@@ -108,8 +105,17 @@ const UserLogin: React.FC = () => {
   };
 
   const LoginForm = () => (
-    <div className={`w-full max-w-md p-6 rounded-lg  ${isMobile ? 'shadow-lg bg-white/80 backdrop-blur-sm mb-4' : 'border-none mb-4'}`}>
-      <h2 className={`mb-6 text-xl font-bold md:text-3xl text-themeColor`}>LOGIN</h2>
+    <div
+      className={`w-full max-w-md p-6 rounded-lg 
+         ${
+        isMobile
+          ? "shadow-lg bg-white/80 backdrop-blur-sm mb-4"
+          : "border-none mb-4"
+      }`}
+    >
+      <h2 className={`mb-6 text-xl font-bold md:text-3xl text-themeColor`}>
+        LOGIN
+      </h2>
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={baseValidationSchema}
@@ -117,63 +123,85 @@ const UserLogin: React.FC = () => {
       >
         {({ errors, touched }) => (
           <Form className="space-y-4">
-          <div className="relative">
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
-              Enter Email
-            </label>
-            <FontAwesomeIcon
-              icon={faEnvelope}
-              className={`absolute transform -translate-y-1/2 top-12 left-4 ${
-                errors.email && touched.email ? "text-red-400" : "text-gray-400"
-              }`}
-            />
-            <Field
-              type="email"
-              name="email"
-              className={`w-full py-2 pl-10 pr-4 placeholder-gray-400 rounded-full  placeholder:font-thin placeholder:italic ${isMobile ? 'shadow-xl' : ''}`}
-              placeholder="example@gmail.com"
-            />
-            <ErrorMessage name="email" component="div" className="mt-1 text-sm text-red-500" />
-          </div>
+            <div className="relative">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Enter Email
+              </label>
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                className={`absolute transform -translate-y-1/2 top-12 left-4 ${
+                  errors.email && touched.email
+                    ? "text-red-400"
+                    : "text-gray-400"
+                }`}
+              />
+              <Field
+                type="email"
+                name="email"
+                className={`w-full py-2 pl-10 pr-4 placeholder-gray-400 rounded-full  placeholder:font-thin placeholder:italic ${
+                  isMobile ? "shadow-xl" : ""
+                }`}
+                placeholder="example@gmail.com"
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="mt-1 text-sm text-red-500"
+              />
+            </div>
 
-          <div className="relative">
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
-              Enter Password
-            </label>
-            <FontAwesomeIcon 
-              icon={faLock}
-              className={`absolute transform -translate-y-1/2 top-12 left-4 ${
-                errors.password && touched.password ? "text-red-400" : "text-gray-400"
-              }`}
-            />
-            <Field
-              type={showPassword ? "text" : "password"}
-              name="password"
-              className={`w-full py-2 pl-10 pr-4 placeholder-gray-400 rounded-full  placeholder:font-thin placeholder:italic ${isMobile ? 'shadow-xl' : ''}`}
-              placeholder="Password"
-            />
-            <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
-              onClick={togglePasswordVisibility}
-              className="absolute text-gray-400 transform -translate-y-1/2 cursor-pointer top-12 right-4"
-            />
-            <ErrorMessage name="password" component="div" className="mt-1 text-sm text-red-500" />
-          </div>
+            <div className="relative">
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Enter Password
+              </label>
+              <FontAwesomeIcon
+                icon={faLock}
+                className={`absolute transform -translate-y-1/2 top-12 left-4 ${
+                  errors.password && touched.password
+                    ? "text-red-400"
+                    : "text-gray-400"
+                }`}
+              />
+              <Field
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className={`w-full py-2 pl-10 pr-4 placeholder-gray-400 rounded-full  placeholder:font-thin placeholder:italic ${
+                  isMobile ? "shadow-xl" : ""
+                }`}
+                placeholder="Password"
+              />
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                onClick={togglePasswordVisibility}
+                className="absolute text-gray-400 transform -translate-y-1/2 cursor-pointer top-12 right-4"
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="mt-1 text-sm text-red-500"
+              />
+            </div>
 
-          <div className="text-right">
-            <button 
-              className="text-sm italic text-blue-500"
-              type="button"
-              onClick={() => setShowForgetPasswordModel(true)}
-            >
-              forget password
-            </button>
-          </div>
+            <div className="text-right">
+              <button
+                className="text-sm italic text-blue-500"
+                type="button"
+                onClick={() => setShowForgetPasswordModel(true)}
+              >
+                forget password
+              </button>
+            </div>
 
-          <div className="pt-2">
-            <AuthButton text="Login" />
-          </div>
-        </Form>
+            <div className="pt-2">
+              <AuthButton text="Login" />
+            </div>
+          </Form>
         )}
       </Formik>
 
@@ -185,7 +213,10 @@ const UserLogin: React.FC = () => {
 
       <div className="flex items-center justify-center mt-4">
         <img src="/google.svg" alt="Google" className="w-5 h-5 mr-2" />
-        <span className="text-sm cursor-pointer text-themeColor" onClick={handleGoogleSignIn}>
+        <span
+          className="text-sm cursor-pointer text-themeColor"
+          onClick={handleGoogleSignIn}
+        >
           Sign up with Google
         </span>
       </div>
@@ -201,7 +232,6 @@ const UserLogin: React.FC = () => {
     </div>
   );
 
-
   const DesktopView = () => (
     <div className="relative min-h-screen p-4 bg-customGrey">
       <div className="absolute -left-40 -top-64 w-[120vh] h-[120vh] bg-themeColor rounded-full" />
@@ -211,7 +241,8 @@ const UserLogin: React.FC = () => {
           <div className="relative flex flex-col justify-center w-1/2 pr-8 -top-24">
             <h1 className="text-5xl font-medium text-customGrey">WELCOME</h1>
             <p className="text-xl text-customGrey w-[600px] break-words">
-              Start your journey today and turn your coding dreams into reality with CodeMATE.
+              Start your journey today and turn your coding dreams into reality
+              with CodeMATE.
             </p>
           </div>
           <div className="relative flex items-center justify-center w-1/2 -top-10">
@@ -221,18 +252,19 @@ const UserLogin: React.FC = () => {
       </div>
     </div>
   );
-  
-
 
   const MobileView = () => (
-    <div className="relative w-full overflow-hidden min-h-auto bg-customGrey">
+    <div className="relative w-full min-h-screen overflow-hidden bg-customGrey">
       <div className="absolute -left-1/4 -top-2 w-[150vw] h-[50vh] bg-themeColor rounded-b-[100%]" />
-      <div className="relative z-10 flex flex-col items-center px-4 pt-10">
+      <div className="relative z-10 flex flex-col items-center h-full px-4 pt-16">
         <h1 className="mb-2 text-4xl font-medium text-customGrey">WELCOME</h1>
         <p className="mb-8 text-lg text-center text-customGrey">
-          Start your journey today and turn your coding dreams into reality with CodeMATE.
+          Start your journey today and turn your coding dreams into reality with
+          CodeMATE.
         </p>
-        <LoginForm />
+        <div className="w-full pt-12">
+          <LoginForm />
+        </div>
       </div>
     </div>
   );

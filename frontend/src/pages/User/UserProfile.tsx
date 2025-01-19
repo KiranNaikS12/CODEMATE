@@ -83,7 +83,7 @@ const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-customGrey">
+    <div className="flex flex-col w-full min-h-screen bg-gray-200">
       <Header />
       <div className="flex flex-col h-full gap-8 pr-4 mt-8 md:flex-row md:pl-12 lg:pl-36 md:pr-28">
         <div className="flex flex-col items-center w-full ml-2 bg-white rounded-lg shadow-lg md:w-1/4 md:mb-10 md:ml-0  md:h-[calc(100vh-190px)] overflow-y-auto">

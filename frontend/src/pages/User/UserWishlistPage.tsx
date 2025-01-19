@@ -52,10 +52,10 @@ const UserWishlistPage:React.FC = () => {
     }
     
      return (
-        <div className="flex flex-col w-full min-h-screen bg-customGrey">
+        <div className="flex flex-col w-full min-h-screen bg-gray-200">
             <Header/>
             <div className='flex items-end justify-center mt-4 gap-x-1'>
-                <h1 className="text-2xl font-medium text-themeColor bg-customGrey">MY WISHLIST</h1>
+                <h1 className="text-2xl font-medium bg-gray-200 text-themeColor">MY WISHLIST</h1>
                 <h1 className='text-md text-highlightBlue'>
                     {wishlistDetails?.totalItemCount || 0 } {wishlistDetails?.totalItemCount === 1 ? 'item' : 'items'} listed has favourite
                 </h1>

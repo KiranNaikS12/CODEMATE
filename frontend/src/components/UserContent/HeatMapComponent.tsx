@@ -25,9 +25,9 @@ const HeatMapComponent: React.FC<HeatMapComponentProps> = ({ user }) => {
   
   
   return (
-    <div className="p-4 border border-white rounded-md shadow-md py-7 text-themeColor">
+    <div className="p-4 bg-white border-b border-gray-200 rounded-md py-7 text-themeColor ">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 bg-white">
         <p className="text-xl font-medium text-gray-500">
           {user?.totalSubmission?.count || 0} submissions in the past 6 months
         </p>

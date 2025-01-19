@@ -98,7 +98,7 @@ const UserCoursePage: React.FC = () => {
                 position="bottom-center"
                 richColors
             />
-            <div className='flex flex-col w-full min-h-screen bg-customGrey'>
+            <div className='flex flex-col w-full min-h-screen bg-gray-200'>
                 <Header />
                 <div className='flex flex-col w-full'>
                     <div className='flex flex-col items-center justify-center w-full'>

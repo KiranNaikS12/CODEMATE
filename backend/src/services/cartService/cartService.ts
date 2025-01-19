@@ -53,7 +53,7 @@ export class CartService implements ICartService {
 
         const order = await this.PaymentRepository.findOne({
             items: {
-                $elemMatch: {course: courseId}
+                $elemMatch: {course: courseId, user: userId}
             }
         });
 

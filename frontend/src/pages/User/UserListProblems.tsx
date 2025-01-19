@@ -164,7 +164,7 @@ const UserListProblems: React.FC = () => {
   const totalPage = Math.ceil(totalCount / limit);
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-customGrey">
+    <div className="flex flex-col w-full min-h-screen bg-gray-200">
       <Header />
       <div className="flex flex-col w-full px-4 md:px-8 lg:px-12">
         {/* Header Section */}

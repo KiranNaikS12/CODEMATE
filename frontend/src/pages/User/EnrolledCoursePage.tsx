@@ -12,7 +12,7 @@ const EnrolledCoursePage: React.FC = () => {
     console.log(course);
     
     return (
-        <div className='flex flex-col w-full min-h-screen bg-customGrey'>
+        <div className='flex flex-col w-full min-h-screen bg-gray-200'>
             <Header />
             <div className='flex flex-col items-center w-full mb-8'>
                 <div className='flex flex-col w-full max-w-[1200px] space-y-6 mx-auto mt-4'>

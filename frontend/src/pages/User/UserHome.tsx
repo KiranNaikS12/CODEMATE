@@ -28,7 +28,7 @@ const UserHome = () => {
   const { data: problemResponse } = useGetProblemCountQuery('');
   const problemCounts = problemResponse?.data;
   const { data: dashStats } = useGetDashboardStatsQuery(userId);
-  
+
   useEffect(() => {
     if (userInfo) {
       if (userInfo.isBlocked) {
@@ -42,12 +42,12 @@ const UserHome = () => {
   const totalSolved = (userData?.solvedEasy?.solvedCount || 0) + (userData?.solvedMedium?.solvedCount || 0) + (userData?.solvedHard?.solvedCount || 0);
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-customGrey">
+    <div className="flex flex-col w-full min-h-screen bg-gray-200">
       <Header />
-      <div className="flex items-start ">
+      <div>
         <div>
           {/* first section */}
-          <div className="flex flex-col items-center justify-center pt-2 pr-4 sm:flex-row lg:pr-36 lg:pl-36 gap-x-4 gap-y-4 ">
+          <div className="flex flex-col items-center justify-center w-full gap-4 px-6 pt-2 lg:px-36 sm:flex-row">
             <div className="relative w-full p-2 pt-2 pb-1 overflow-hidden rounded-lg shadow-lg bg-themeColor basis-3/4">
               <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none -left-6">
                 <motion.h1 className="text-[45px] md:text-[130px] font-extrabold text- tracking-wider select-none leading-none font-rubik-wet-paint">
@@ -152,11 +152,11 @@ const UserHome = () => {
           </div>
 
           {/* second section */}
-          <div className="flex flex-col items-start pt-2 mt-3 sm:flex-row lg:pr-36 lg:pl-36 gap-x-4 gap-y-4">
+          <div className="flex flex-col items-start px-6 pt-2 mt-3 sm:flex-row lg:pr-36 lg:pl-36 gap-x-4 gap-y-4">
             <div className="w-full pt-2 pb-1 overflow-hidden rounded-lg basis-3/4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
-                <div className="flex flex-col justify-center w-full max-w-xs p-6 py-6 transition-transform duration-300 ease-in-out transform border-2 border-gray-200 rounded-lg shadow-md bg-gradient-to-br from-blue-50 to-blue-100">
+                <div className="flex flex-col justify-center w-full p-6 py-6 transition-transform duration-300 ease-in-out transform border-2 border-gray-200 rounded-lg shadow-md md:max-w-xs bg-gradient-to-br from-blue-50 to-blue-100">
                   <div className="flex items-center justify-between ">
                     <div>
                       <p className="text-xl font-medium text-blue-600 hover:text-blue-500 hover:underline">
@@ -173,7 +173,7 @@ const UserHome = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-center w-full max-w-xs p-6 py-6 transition-transform duration-300 ease-in-out transform border-2 border-gray-200 rounded-lg shadow-md bg-gradient-to-br from-rose-50 to-rose-100">
+                <div className="flex flex-col justify-center w-full p-6 py-6 transition-transform duration-300 ease-in-out transform border-2 border-gray-200 rounded-lg shadow-md md:max-w-xs bg-gradient-to-br from-rose-50 to-rose-100">
                   <div className="flex items-center justify-between cursor-pointer">
                     <div>
                       <Link to={`/enroll-course/${userId}`}>
@@ -193,7 +193,7 @@ const UserHome = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-center w-full max-w-xs p-6 py-6 transition-transform duration-300 ease-in-out transform border-2 border-gray-200 rounded-lg shadow-md bg-gradient-to-br from-emerald-50 to-emerald-100">
+                <div className="flex flex-col justify-center w-full p-6 py-6 transition-transform duration-300 ease-in-out transform border-2 border-gray-200 rounded-lg shadow-md md:max-w-xs bg-gradient-to-br from-emerald-50 to-emerald-100">
                   <div className="flex items-center justify-between p-3">
                     <div>
                       <p className="text-xl font-medium hover:text-blue-500 hover:underline text-emerald-600">
@@ -228,9 +228,13 @@ const UserHome = () => {
           </div>
 
           {/* Third section */}
-          <div className="flex flex-col items-start pt-2 mt-3 jus sm:flex-row lg:pr-36 lg:pl-36 gap-x-4 gap-y-4">
-            <div className="w-full pt-2 pb-1 overflow-hidden rounded-lg basis-3/4">
-              <HeatMapComponent user={userData} />
+          <div className="flex flex-col w-full gap-4 px-6 pt-2 mt-3 lg:px-36 sm:flex-row">
+            <div className="w-full min-w-0 sm:basis-3/4">
+              <div className="overflow-x-auto">
+                <div className="min-w-[900px] ">
+                  <HeatMapComponent user={userData} />
+                </div>
+              </div>
             </div>
             <div className="shrink-0 sm:w-[400px] w-full ">
               <RadialChart user={userData} problemCount={problemCounts} />
@@ -239,9 +243,9 @@ const UserHome = () => {
 
           {/* Fourth Section */}
           <div className="flex flex-col items-start pt-2 mt-3 jus sm:flex-row lg:pr-36 lg:pl-36 gap-x-4 gap-y-4">
-             <div>
-                <HomeTabs user = {userData}/>
-             </div>
+            <div>
+              <HomeTabs user={userData} />
+            </div>
           </div>
         </div>
       </div>
