@@ -54,7 +54,7 @@ const UserLogin: React.FC = () => {
   //handling mobile div  
   useEffect(() => {    
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      setIsMobile(window.innerWidth < 1000)
     }
     checkMobile();
 
@@ -225,7 +225,7 @@ const UserLogin: React.FC = () => {
 
 
   const MobileView = () => (
-    <div className="relative w-full min-h-screen overflow-hidden bg-customGrey">
+    <div className="relative w-full overflow-hidden min-h-auto bg-customGrey">
       <div className="absolute -left-1/4 -top-2 w-[150vw] h-[50vh] bg-themeColor rounded-b-[100%]" />
       <div className="relative z-10 flex flex-col items-center px-4 pt-10">
         <h1 className="mb-2 text-4xl font-medium text-customGrey">WELCOME</h1>
