@@ -95,6 +95,7 @@ const TutorLogin = () => {
       }
     } catch (error) {
       const apiError = error as APIError;
+      console.log('error', apiError)
       if(apiError.data && apiError.data?.message){
         toast.error(apiError.data?.message)
       }else {
