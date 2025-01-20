@@ -65,13 +65,12 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
       });
   }
 
-
-
   //handlingImageUpload 
   const handleUpload = async () => {
     if (formData) {
       try {
         let response;
+        // user profile upload
         if (roleId === 'user') {
           response = await userUploadImage({ userId, formData }).unwrap();
           if (response?.data?.profileImage) {
@@ -81,7 +80,9 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
               }
             }));
           }
-        } else if (roleId === 'tutor') {
+        }
+        // tutor profile upload
+        else if (roleId === 'tutor') {
           response = await tutorUploadImage({ userId, formData }).unwrap();
           if (response?.data?.profileImage) {
             dispatch(tutorUpdate({
@@ -91,7 +92,7 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
             }));
           }
         }
-
+  
         Swal.fire({
           icon: 'success',
           title: 'Avatar updated!',
@@ -105,6 +106,7 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
       }
     }
   };
+  
 
   //handleImageRoation 
   const rotateClockwise = () => {
