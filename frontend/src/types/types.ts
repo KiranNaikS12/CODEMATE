@@ -1,9 +1,13 @@
+import { TutorAdditonal } from "./tutorTypes";
+import { UserAdditional } from "./userTypes";
 
 
 export type APIError = {
     data?: {
         message?: string;
     };
+    message?: string;
+    status?: number;
 };
 
 export enum Role {
@@ -45,6 +49,7 @@ export interface ProfileImageProps {
     userId: string;
     roleId: string;
     refetch: () => void;
+    userData?: UserAdditional | TutorAdditonal
 }
 
 // problem related types

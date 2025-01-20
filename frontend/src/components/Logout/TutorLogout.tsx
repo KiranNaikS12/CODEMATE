@@ -12,7 +12,7 @@ const TutorLogout = () => {
     try {
       await logout({}).unwrap();
       dispatch(clearCredentials());
-      navigate("/tutor/login");
+      navigate("/");
     } catch (error) {
       console.error("Failed to logout:", error);
     }

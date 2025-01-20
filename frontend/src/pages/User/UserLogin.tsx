@@ -53,7 +53,7 @@ const UserLogin: React.FC = () => {
   //handling mobile div
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 420)
+      setIsMobile(window.innerWidth < 800)
     }
     checkMobile();
 

@@ -11,6 +11,7 @@ import CoursePage from "../components/TutorContent/CoursePage"
 import AddCourseForm from "../components/TutorContent/AddCourseForm"
 import EnrolledStudents from "../components/TutorContent/EnrolledStudents"
 import NotFound from "../pages/CommonPages/NotFound"
+import LandingPage from "../pages/LandingPage/LandingPage"
 
 
 
@@ -18,6 +19,7 @@ const TutorRoute = () => {
   return (
     <Routes>
          {/* public routes  */}
+        <Route path='' element={<LandingPage/>}></Route>
         <Route path="/login" element = {<TutorLogin/>}></Route>
         <Route path="/register" element ={<TutorRegister/>}></Route>
         <Route path='/reset-password/:id/:token' element={<ResetPassword />} />

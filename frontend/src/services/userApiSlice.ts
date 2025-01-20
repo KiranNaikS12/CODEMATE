@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { showUserDetailsResponse } from "../types/userTypes";
 import { FilteredData, ListProblemResponse, showProblemDataResponse } from "../types/problemTypes";
 import { showCourseDetailsResponse, showCourseViewResponse } from "../types/courseTypes";
-import { ListTutorResponse } from "../types/tutorTypes";
+import { ListTutorResponse, showTutorDetailResponse } from "../types/tutorTypes";
 import { showCartDetailsResponse } from "../types/cartTypes";
 import { showWishlistDetailsResponse } from "../types/wishlistTypes";
 import { FilteredDataForHistory, showEnrolledCourseResponse, showOrderDetailsResponse, showPaymentDetailsResponse } from "../types/orderTypes";
@@ -348,6 +348,12 @@ export const apiSlice = createApi({
           url:`/users/get-stats/${id}`,
           method:'GET'
         })
+      }),
+      viewTutorData: builder.query<showTutorDetailResponse, string>({
+        query: (tutorId) => ({
+          url:`/users/tutor/${tutorId}`,
+          method: 'GET'
+        }),
       })
     }),
 
@@ -399,7 +405,8 @@ export const {
     useListProblemReviewsQuery,
     useGetUserProgressDataQuery,
     useGetProblemCountQuery,
-    useGetDashboardStatsQuery
+    useGetDashboardStatsQuery,
+    useViewTutorDataQuery
 
 } = apiSlice;
 

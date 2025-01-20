@@ -19,12 +19,15 @@ import Problems from '../pages/User/Problems';
 import EnrolledCoursePage from '../pages/User/EnrolledCoursePage';
 import AcessCourse from '../pages/User/AcessCourse';
 import NotFound from '../pages/CommonPages/NotFound';
+import ViewTutorProfile from '../pages/User/ViewTutorProfile';
+import LandingPage from '../pages/LandingPage/LandingPage';
 
 
 const UserRoute = () => {
   return (  
     <Routes>
         {/* public routes  */}
+        <Route path='' element={<LandingPage/>}></Route>
         <Route path='/login' element = {<UserLogin/>}></Route>
         <Route path='/register' element = {<UserRegistrations/>}/>
         <Route path='/reset-password/:id/:token' element={<ResetPassword />} />
@@ -39,13 +42,14 @@ const UserRoute = () => {
         <Route path='/wishlist/:id' element={<AuthRoute role='user'><UserWishlistPage/></AuthRoute>}></Route>
         <Route path='/checkout/:id' element={<AuthRoute role='user'><StripeCheckoutpage/></AuthRoute>}></Route>
         <Route path='/payment-success' element={<AuthRoute role='user'><PaymentSuccessPage/></AuthRoute>}></Route>
-        <Route path = '/payment-failure' element={<AuthRoute role='user'><PaymentFailurePage/></AuthRoute>}></Route>
+        <Route path='/payment-failure' element={<AuthRoute role='user'><PaymentFailurePage/></AuthRoute>}></Route>
         <Route path='/wallet-success' element={<AuthRoute role='user'><WalletSuccess/></AuthRoute>}></Route>
         <Route path='/wallet-failure' element={<AuthRoute role='user'><WalletFailure/></AuthRoute>}></Route>
         <Route path='/view-course/:id' element={<AuthRoute role='user'><ViewCourse/></AuthRoute>}></Route>
         <Route path='/view-problem/:id' element={<AuthRoute role='user'><Problems/></AuthRoute>}></Route>
         <Route path='/enroll-course/:id' element={<AuthRoute role='user'><EnrolledCoursePage/></AuthRoute>}></Route>
         <Route path='/access-course/:id' element={<AuthRoute role='user'><AcessCourse/></AuthRoute>}></Route>
+        <Route path='/view-tutor/:id' element={<AuthRoute role='user'><ViewTutorProfile/></AuthRoute>}></Route>
 
         <Route path='*' element={<NotFound/>}/>
     </Routes>

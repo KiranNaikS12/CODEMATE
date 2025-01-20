@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../components/Headers/Header'
 import { FaStar } from 'react-icons/fa'
 import usePriceCalculations from '../../hooks/usePriceCalculation'
-import { CheckCircle, CreditCard, DollarSign, Wallet, XCircle } from 'lucide-react'
+import { CheckCircle, DollarSign, Wallet, XCircle } from 'lucide-react'
 import { useCreateCheckoutSessionMutation, useListCartItemsQuery, usePayWithWalletMutation } from '../../services/userApiSlice'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js'
@@ -150,14 +150,14 @@ const UserCheckoutPage: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-customGrey">
+        <div className="flex flex-col w-full min-h-screen bg-gray-200">
             <Header />
-            <Toaster
+            <Toaster    
                 position="top-center"
                 richColors
             />
             <div className='flex items-end mt-2 just ml-36 gap-x-1'>
-                <h1 className="text-2xl font-medium text-themeColor bg-customGrey">ORDER SUMMARY</h1>
+                <h1 className="text-2xl font-medium bg-gray-200 text-themeColor">ORDER SUMMARY</h1>
             </div>
             <Formik
                 initialValues={{ paymentGateway: '' }}
@@ -203,7 +203,7 @@ const UserCheckoutPage: React.FC = () => {
                                     </div>
                                 ))}
                                 {/* payment-option-section */}
-                                <div className='flex flex-col w-full gap-4 mt-12 mb-4 basis-3/4'>
+                                <div className='flex flex-col w-full gap-4 p-2 mt-12 mb-4 basis-3/4'>
                                     <div className='flex items-center gap-x-1'>
                                         <h1 className='text-xl text-themeColor'>Payment Options</h1>
                                         <h1 className='text-sm text-blue-500'>(choose any one of the following)</h1>
@@ -238,26 +238,7 @@ const UserCheckoutPage: React.FC = () => {
                                         </label>
 
                                         {/* razorpay-payment*/}
-                                        <label className="relative flex items-center p-4 cursor-pointer group">
-                                            <Field
-                                                type="radio"
-                                                name="paymentGateway"
-                                                value="razorpay"
-                                                checked={values.paymentGateway === 'razorpay'}
-                                                onChange={() => setFieldValue('paymentGateway', 'razorpay')}
-                                                className="w-5 h-5 transition-all border-2 border-gray-300 rounded-full cursor-pointer checked:border-blue-500 checked:border-6"
-                                            />
-                                            <div className="flex items-center ml-4 gap-x-4">
-                                                <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full">
-                                                    <CreditCard className="w-6 h-6 text-blue-500" />
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium text-gray-900">Razorpay</p>
-                                                    <p className="text-sm text-gray-500">Pay securely with credit/debit card</p>
-                                                </div>
-                                            </div>
-                                            <div className="absolute inset-0 transition-all border-2 border-gray-200 rounded-lg group-hover:border-blue-300" />
-                                        </label>
+                                        
 
                                         {/* Wallet Option */}
                                         <label className="relative flex items-center p-4 cursor-pointer group">
@@ -285,7 +266,7 @@ const UserCheckoutPage: React.FC = () => {
                             </div>
 
                             {/* price-details-section */}
-                            <div className="rounded-lg sm:w-[400px] w-full space-y-3">
+                            <div className="rounded-lg sm:w-[400px] w-full space-y-3 bg-white shadow-md ">
                                 <div className="flex flex-col overflow-hidden rounded-lg ">
                                     <div className="p-4 border-b border-gray-100">
                                         <h1 className="text-lg font-semibold text-themeColor">Price Details</h1>

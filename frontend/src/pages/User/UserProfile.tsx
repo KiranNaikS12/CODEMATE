@@ -298,7 +298,7 @@ const UserProfile: React.FC = () => {
           {renderContent()}
         {isProfileOpen && id && (
            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-           <UploadImageModal handleProfile = {handleProfileModule} userId={id} refetch={refetch} roleId='user'/>    
+           <UploadImageModal handleProfile = {handleProfileModule} userId={id} refetch={refetch} roleId='user' userData = {userData?.data}/>    
          </div>
         )}
       </div>

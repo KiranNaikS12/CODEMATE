@@ -88,12 +88,13 @@ const UserHome = () => {
                       <h1 className="">{userInfo?.username}</h1>
                     </div>
                   </div>
-
                   <div className="-mt-2">
+                    <Link to = '/problem'>
                     <CommonButton
                       buttonText="START CODING"
                       className="px-1 py-1 text-xs border rounded-md text-customGrey border-hoverColor md:text-sm md:px-2 md:py-2"
                     />
+                    </Link>
                   </div>
                 </div>
                 <div className="absolute right-0 flex justify-end w-36 sm:w-64 -bottom-2 sm:right-16 md:right-0 md:w-48">
@@ -143,9 +144,11 @@ const UserHome = () => {
                   </div>
                 </div>
                 <div className="m-4 mt-2">
+                  <Link to={`/profile/${userId}`}>
                   <button className="w-full px-1 py-2 text-sm font-thin text-gray-300 border rounded-md md:px-2 md:py-2 md:font-medium md:text-base border-[#3D3D7E]">
                     EDIT PROFILE
                   </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -199,8 +202,8 @@ const UserHome = () => {
                       <p className="text-xl font-medium hover:text-blue-500 hover:underline text-emerald-600">
                         Wallet Balance
                       </p>
-                      <p className="mt-2 text-3xl font-bold text-gray-900">
-                        {dashStats?.data?.walletBalance}
+                      <p className={`${dashStats?.data?.walletBalance === 0 ? 'text-gray-800 font-light' : 'mt-2 text-3xl font-bold text-gray-900'}`}>
+                        {dashStats?.data?.walletBalance === 0 ? 'Not Active' : dashStats?.data?.walletBalance}
                       </p>
                     </div>
                     <div className="p-3 rounded-lg bg-emerald-500/10" >

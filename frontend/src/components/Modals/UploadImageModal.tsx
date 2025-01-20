@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useUpdateUserProfileMutation } from '../../services/userApiSlice';
 import { APIError } from '../../types/types';
 import { useDispatch } from 'react-redux';
-import { setCredentials as userSetCredentials } from '../../store/slices/authSlice';
-import { setCredentials as tutorSetCredentials } from '../../store/slices/tutorSlice';
+import { updateCredentials as userUpdate } from '../../store/slices/authSlice';
 import Swal from 'sweetalert2'
 import { ProfileImageProps } from '../../types/types';
-import { Toaster, toast} from 'sonner'
+import { Toaster, toast } from 'sonner'
 import { useUpdateTutorImageMutation } from '../../services/tutorApiSlice';
+import { updateCredentials as tutorUpdate } from '../../store/slices/tutorSlice';
+
 
 
 const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, refetch, roleId }) => {
@@ -18,56 +19,53 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
   const dispatch = useDispatch()
 
 
-  const [userUploadImage, {isLoading: UserisLoading} ] = useUpdateUserProfileMutation();
-  const [tutorUploadImage, {isLoading: TutorisLoading}] = useUpdateTutorImageMutation();
+  const [userUploadImage, { isLoading: UserisLoading }] = useUpdateUserProfileMutation();
+  const [tutorUploadImage, { isLoading: TutorisLoading }] = useUpdateTutorImageMutation();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target;
     const file = fileInput.files?.[0];
-    if(file) {
-        const readFile = new FileReader();
-        readFile.onload = () => {
-            setImagePreview(readFile.result as string);
+    if (file) {
+      const readFile = new FileReader();
+      readFile.onload = () => {
+        setImagePreview(readFile.result as string);
 
-            const data = new FormData();
-            data.append('image', file);
-            setFormData(data);
-        };
-        readFile.readAsDataURL(file)
+        const data = new FormData();
+        data.append('image', file);
+        setFormData(data);
+      };
+      readFile.readAsDataURL(file)
     }
   }
 
-  
+
   const handleReset = () => {
     const defaultImageUrl = `/profile.webp`;
     setImagePreview(defaultImageUrl);
 
     setRotaion(0)
-    
+
     //clearing input file
     const fileInput = document.getElementById('file-upload') as HTMLInputElement;
-    if(fileInput) {
+    if (fileInput) {
       fileInput.value = '';
     }
 
     fetch(defaultImageUrl)
-    .then(res => res.blob())
-    .then(blob => {
-      const data = new FormData();
-      data.append('image', blob, 'profile.webp');
-      setFormData(data);
-      toast.success('Profile Image reset to default');
-    })
-    .catch(error => {
-      console.error('Error loading default image:', error);
-      toast.error('Failed to reset profile image');
-    });
-    
-
-    toast.success('Profile Image reset to default')
+      .then(res => res.blob())
+      .then(blob => {
+        const data = new FormData();
+        data.append('image', blob, 'profile.webp');
+        setFormData(data);
+        toast.success('Profile Image reset to default');
+      })
+      .catch(error => {
+        console.error('Error loading default image:', error);
+        toast.error('Failed to reset profile image');
+      });
   }
 
-  
+
 
   //handlingImageUpload 
   const handleUpload = async () => {
@@ -76,18 +74,22 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
         let response;
         if (roleId === 'user') {
           response = await userUploadImage({ userId, formData }).unwrap();
-          const updatedUserInfo = {
-            ...JSON.parse(localStorage.getItem('userInfo') || '{}'),
-            profileImage: response.data.profileImage,
-          };
-          dispatch(userSetCredentials({ data: updatedUserInfo }));
+          if (response?.data?.profileImage) {
+            dispatch(userUpdate({
+              data: {
+                profileImage: response.data.profileImage
+              }
+            }));
+          }
         } else if (roleId === 'tutor') {
           response = await tutorUploadImage({ userId, formData }).unwrap();
-          const updatedTutorInfo = {
-            ...JSON.parse(localStorage.getItem('tutorInfo') || '{}'),
-            profileImage: response.data.profileImage,
-          };
-          dispatch(tutorSetCredentials({ data: updatedTutorInfo }));
+          if (response?.data?.profileImage) {
+            dispatch(tutorUpdate({
+              data: {
+                profileImage: response.data.profileImage
+              }
+            }));
+          }
         }
 
         Swal.fire({
@@ -111,10 +113,10 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
   const rotateCounterclockwise = () => {
     setRotaion((prevRotation) => prevRotation - 90)
   }
- 
-  
 
-  const isLoading = roleId === 'user' ? UserisLoading : TutorisLoading;  
+
+
+  const isLoading = roleId === 'user' ? UserisLoading : TutorisLoading;
   return (
     <div className="flex flex-col bg-white rounded-lg shadow-lg w-96">
       <Toaster
@@ -129,29 +131,29 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
       <div className="flex flex-col items-center justify-center p-8 bg-themeColor">
         <div className="flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-300 rounded-md">
           {imagePreview ? (
-            <img src={imagePreview} 
-              alt="Preview" 
-              className='object-cover w-full h-full' 
-              style={{transform:`rotate(${roation}deg)`}}
-              />
-          ): (     
-          <div className='flex flex-col items-center'>
-          <Camera size={24} className='text-gray-500'/>
-          <span className="text-gray-500">Image Preview</span>
-          </div>
+            <img src={imagePreview}
+              alt="Preview"
+              className='object-cover w-full h-full'
+              style={{ transform: `rotate(${roation}deg)` }}
+            />
+          ) : (
+            <div className='flex flex-col items-center'>
+              <Camera size={24} className='text-gray-500' />
+              <span className="text-gray-500">Image Preview</span>
+            </div>
           )}
         </div>
-         <div className='flex justify-around mt-6 space-x-2'>
-            <button onClick={rotateClockwise} className='px-2 py-2 border rounded-lg text-customGrey border-hoverColor'>
-                <RotateCcw size={20}/>
-            </button>
-            <button onClick={rotateCounterclockwise} className='px-2 py-2 border rounded-lg text-customGrey border-hoverColor'>
-                <RotateCw size={20}/>
-            </button>
-            <button onClick={handleReset}  className='px-2 py-2 text-sm font-semibold border rounded-lg text-customGrey border-hoverColor'>
-                Set Default
-            </button>
-         </div>
+        <div className='flex justify-around mt-6 space-x-2'>
+          <button onClick={rotateClockwise} className='px-2 py-2 border rounded-lg text-customGrey border-hoverColor'>
+            <RotateCcw size={20} />
+          </button>
+          <button onClick={rotateCounterclockwise} className='px-2 py-2 border rounded-lg text-customGrey border-hoverColor'>
+            <RotateCw size={20} />
+          </button>
+          <button onClick={handleReset} className='px-2 py-2 text-sm font-semibold border rounded-lg text-customGrey border-hoverColor'>
+            Set Default
+          </button>
+        </div>
       </div>
 
       <div className="p-4 rounded-b-lg bg-customGrey">
@@ -164,10 +166,10 @@ const UploadImageModal: React.FC<ProfileImageProps> = ({ handleProfile, userId, 
             className="hidden"
           />
           <div className='flex items-center justify-center '>
-          <File size={16}/>
-          <span className="py-2 text-sm text-center text-gray-900 cursor-pointer focus:outline-none">
-            Choose Image
-          </span>
+            <File size={16} />
+            <span className="py-2 text-sm text-center text-gray-900 cursor-pointer focus:outline-none">
+              Choose Image
+            </span>
           </div>
         </label>
 

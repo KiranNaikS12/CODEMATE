@@ -35,9 +35,17 @@ const tutorSlice = createSlice({
         clearCredentials: (state) => {
             state.tutorInfo = null;
             localStorage.removeItem('tutorInfo')
+        },
+        updateCredentials: (state, action) => {
+            state.tutorInfo = {
+                ...state.tutorInfo,
+                ...action.payload.data
+            };
+            const encryptedData = encryptData(state.tutorInfo);
+            localStorage.setItem('tutorInfo', encryptedData)
         }
     }
 })
 
-export const { setCredentials, clearCredentials} = tutorSlice.actions;
+export const { setCredentials, clearCredentials, updateCredentials} = tutorSlice.actions;
 export default tutorSlice.reducer;

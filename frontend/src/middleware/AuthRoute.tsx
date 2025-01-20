@@ -52,11 +52,11 @@ const AuthRoute: React.FC<AuthRouteProps> = ({ children, role }) => {
       switch (role) {
         case "user":
           dispatch(userClearCredentials());
-          navigate("/login");
+          navigate("/");
           break;
         case "tutor":
           dispatch(tutorClearCredentials());
-          navigate("/tutor/login");
+          navigate("/");
           break;
         case "admin":
           dispatch(adminClearCredentials());
