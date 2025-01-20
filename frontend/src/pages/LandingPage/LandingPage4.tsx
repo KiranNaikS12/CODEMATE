@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-const LandingPage4 = () => {
+const LandingPage4:React.FC = () => {
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { 
