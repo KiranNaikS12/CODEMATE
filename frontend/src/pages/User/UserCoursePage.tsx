@@ -263,8 +263,8 @@ const UserCoursePage: React.FC = () => {
                                                 </Link>
                                                 <motion.button
                                                     className={`w-full px-2 py-2 rounded-lg ${course.isBlocked
-                                                            ? "bg-gray-400 cursor-not-allowed text-gray-700"
-                                                            : "bg-themeColor text-customGrey"
+                                                        ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                                                        : "bg-themeColor text-customGrey"
                                                         }`}
                                                     whileHover={course.isBlocked ? {} : { background: "#3D3D7E" }}
                                                     onClick={() => {
@@ -285,49 +285,51 @@ const UserCoursePage: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                    {/* TUTOR SECTION */}
-                    <div className='flex items-center justify-center w-full mt-12'>
-                        <div className='flex justify-between w-[1200px]'>
-                            <h1 className='text-2xl font-medium'>Top Mentors</h1>
-                            <button className='text-sm font-normal text-blue-500'>
-                                <div className='flex items-center gap-x-1'>
-                                    See More
-                                    <CircleChevronRight size={16} color='#3B82F6' />
-                                </div>
-                            </button>
+                        {/* TUTOR SECTION */}
+                        <div className='flex items-center justify-center w-full mt-12'>
+                            <div className='flex justify-between w-[1200px]'>
+                                <h1 className='text-2xl font-medium'>Top Mentors</h1>
+                                <button className='text-sm font-normal text-blue-500'>
+                                    <div className='flex items-center gap-x-1'>
+                                        See More
+                                        <CircleChevronRight size={16} color='#3B82F6' />
+                                    </div>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div className='mb-4'>
-                        <div className='flex w-[1200px] mt-5 space-x-4'>
-                            {tutorData?.data.map((tutor: Tutor) => (
-                                <motion.div className='flex flex-col items-center justify-center p-5 pb-4 bg-gray-200 rounded-md'
-                                    key={tutor._id}
-                                    whileHover={{ scale: 1.02 }}
-                                >
-                                    <div className=''>
-                                        <img src={tutor.profileImage || '/profile.webp'} alt="profile" className='object-cover rounded-full w-36 h-36' />
-                                    </div>
-                                    <div className='flex flex-col items-center justify-center p-2 gap-y-1'>
-                                        <h1 className='text-lg font-medium text-hoverColor'>James Rodri</h1>
-                                        <h1 className='text-sm font-thin text-highlightBlue'>Full Stack Developer</h1>
-                                    </div>
-                                    <hr className='w-full border-t-2 border-customGrey' />
-                                    <div className="flex justify-between mt-2 gap-x-6 text-highlightBlue">
-                                        <h1 className='flex items-center text-sm gap-x-1'><span><FaStar style={{ color: "#ffd700", fontSize: "16px" }} /></span> 4.5</h1>
-                                        <h1 className='text-sm'>100 students</h1>
-                                    </div>
-                                    <motion.button className='w-full px-2 py-2 mt-3 rounded-lg bg-themeColor text-customGrey'
-                                        whileHover={{ background: '#3D3D7E' }}
+                        <div className='mb-4'>
+                            <div className='flex w-[1200px] mt-5 space-x-4'>
+                                {tutorData?.data.map((tutor: Tutor) => (
+                                    <motion.div className='flex flex-col items-center justify-center p-5 pb-4 bg-gray-200 rounded-md'
+                                        key={tutor._id}
+                                        whileHover={{ scale: 1.02 }}
                                     >
-                                        View Profile
-                                    </motion.button>
-                                </motion.div>
-                            ))}
+                                        <div className=''>
+                                            <img src={tutor.profileImage || '/profile.webp'} alt="profile" className='object-cover rounded-full w-36 h-36' />
+                                        </div>
+                                        <div className='flex flex-col items-center justify-center p-2 gap-y-1'>
+                                            <h1 className='text-lg font-medium text-hoverColor'>James Rodri</h1>
+                                            <h1 className='text-sm font-thin text-highlightBlue'>Full Stack Developer</h1>
+                                        </div>
+                                        <hr className='w-full border-t-2 border-customGrey' />
+                                        <div className="flex justify-between mt-2 gap-x-6 text-highlightBlue">
+                                            <h1 className='flex items-center text-sm gap-x-1'><span><FaStar style={{ color: "#ffd700", fontSize: "16px" }} /></span> 4.5</h1>
+                                            <h1 className='text-sm'>100 students</h1>
+                                        </div>
+                                        <Link to= {`/view-tutor/${tutor._id}`}>
+                                            <motion.button className='w-full px-2 py-2 mt-3 rounded-lg bg-themeColor text-customGrey'
+                                                whileHover={{ background: '#3D3D7E' }}
+                                            >
+                                                View Profile
+                                            </motion.button>
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div >
+            </div >
         </>
     )
 }
