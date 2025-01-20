@@ -83,6 +83,7 @@ router.post('/problem-review', protectRole([Role.User]), authMiddleware, (req,re
 router.get('/list-problem-review/:id', protectRole([Role.User]), authMiddleware, (req,res) => mangageReviewController.listProblemReviews(req,res));
 router.get('/list-user/:userId', protectRole([Role.User]), authMiddleware, (req,res) => manageUserController.displayUserDetail(req,res));
 router.get('/get-count', protectRole([Role.User]), authMiddleware, (req,res) => manageProblemController.getTotalProblemCounts(req,res));
-router.get('/get-stats/:id', protectRole([Role.User]), authMiddleware, (req,res) => userProfileController.getDashboardStats(req,res))
+router.get('/get-stats/:id', protectRole([Role.User]), authMiddleware, (req,res) => userProfileController.getDashboardStats(req,res));
+router.get('/tutor/:tutorId', protectRole([Role.User]), authMiddleware, (req,res) => manageTutorController.displayTutorDetails(req,res))
 
 export default router;

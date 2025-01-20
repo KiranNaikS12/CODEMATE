@@ -101,6 +101,7 @@ export const AuthMessages = {
     WALLET_INFO_NOT_FOUND: 'User wallet not found',
     INVALID_AMOUNT: 'Transaction amount should be greater than 100',
     WALLET_NOT_FOUND: 'Wallet not found',
+    WALLET_ACTIVATION_PENDING: "Please activate your wallet",
     TRANSACTION_NOT_FOUND: 'Wallet transaction id not found',
     AMOUNT_NOT_FOUND:'Wallet top up amount not found',
     WALLET_PAYMENT_FAILED: 'Payment failed',

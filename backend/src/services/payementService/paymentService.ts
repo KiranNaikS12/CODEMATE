@@ -332,7 +332,7 @@ export class PayementService implements IPayemntService {
 
         if (!user) throw new CustomError(AuthMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND);
         if (!userCart) throw new CustomError(AuthMessages.CART_IS_EMPTY, HttpStatusCode.BAD_REQUEST);
-        if (!userWallet) throw new CustomError(AuthMessages.WALLET_NOT_FOUND, HttpStatusCode.NOT_FOUND);
+        if (!userWallet) throw new CustomError(AuthMessages.WALLET_ACTIVATION_PENDING, HttpStatusCode.NOT_FOUND);
 
 
         const walletBalance = userWallet.walletBalance;
@@ -376,8 +376,6 @@ export class PayementService implements IPayemntService {
         });
 
         // If payment is created successfully, update cart and wallet
-
-        console.log('wallet befor', userWallet)
 
         try {
             const [updateCart, updateWallet] = await Promise.all([

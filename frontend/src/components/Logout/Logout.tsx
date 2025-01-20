@@ -15,7 +15,7 @@ const Logout = () => {
         await logoutApiCall({}).unwrap();
         
         dispatch(clearCredentials());
-        navigate('/login')
+        navigate('/')
     }catch(error){
         console.error('Failed to register:', error);
     }

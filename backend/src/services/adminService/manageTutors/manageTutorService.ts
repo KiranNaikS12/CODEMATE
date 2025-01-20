@@ -35,6 +35,7 @@ export class ManageTutorService implements IManageutorService {
     }
 
     async displayTutorDetails(tutorId:string): Promise<ITutor> {
+        if(!tutorId) throw new CustomError(AuthMessages.NO_TUTOR_FOUND, HttpStatusCode.BAD_REQUEST)
         const tutorDetail = await this.TutorRepository.findById(tutorId);
         if(!tutorDetail){
             throw new CustomError(AuthMessages.NO_TUTOR_FOUND,HttpStatusCode.NOT_FOUND)
