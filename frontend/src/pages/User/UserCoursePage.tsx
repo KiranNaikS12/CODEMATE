@@ -308,7 +308,7 @@ const UserCoursePage: React.FC = () => {
                                             <img src={tutor.profileImage || '/profile.webp'} alt="profile" className='object-cover rounded-full w-36 h-36' />
                                         </div>
                                         <div className='flex flex-col items-center justify-center p-2 gap-y-1'>
-                                            <h1 className='text-lg font-medium text-hoverColor'>James Rodri</h1>
+                                            <h1 className='text-lg font-medium text-hoverColor'>{tutor.username}</h1>
                                             <h1 className='text-sm font-thin text-highlightBlue'>Full Stack Developer</h1>
                                         </div>
                                         <hr className='w-full border-t-2 border-customGrey' />
