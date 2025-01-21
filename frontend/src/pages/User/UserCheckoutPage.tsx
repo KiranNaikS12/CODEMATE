@@ -126,7 +126,7 @@ const UserCheckoutPage: React.FC = () => {
 
     if (!cartDetails || !cartDetails.items || cartDetails.items.length === 0) {
         return (
-            <div className="flex flex-col w-full min-h-screen bg-customGrey">
+            <div className="flex flex-col w-full min-h-screen bg-gray-200">
                 <Header />
                 <div className="relative flex flex-col items-center mt-20 justify-evenly">
                     <img
