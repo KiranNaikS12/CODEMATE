@@ -7,11 +7,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Home,
-  Compass,
   Notebook,
   GraduationCap,
-  HelpCircle,
-  BellIcon,
 } from "lucide-react";
 import Logout from "../Logout/Logout.tsx";
 import { useState } from "react";
@@ -86,12 +83,6 @@ const Header:React.FC = () => {
               <Link to="/course" className="hover:text-[#247cff] transition-colors duration-200">
                 Course
               </Link>
-              <Link to="/explore" className="hover:text-[#247cff] transition-colors duration-200">
-                Explore
-              </Link>
-              <Link to="/drag" className="hover:text-[#247cff] transition-colors duration-200">
-                Help
-              </Link>
             </nav>
           </div>
         </div>
@@ -128,9 +119,6 @@ const Header:React.FC = () => {
               </div>
             )}
           </div>
-          <button className="border border-[#247cff] text-themeColor p-1 rounded-md shadow-md hover:bg-themeColor hover:text-customGrey hidden md:block transition-all duration-200">
-            Premium
-          </button>
         </div>
       </header>
 
@@ -199,29 +187,6 @@ const Header:React.FC = () => {
           >
             <GraduationCap className="w-5 h-5 group-hover:text-[#247cff] transition-colors duration-200" />
             <span className="font-medium">Course</span>
-          </Link>
-
-          <Link
-            to="/explore"
-            className="flex items-center p-3 space-x-4 text-customGrey rounded-lg hover:bg-[#3D3D7E] transition-colors duration-200 group"
-          >
-            <Compass className="w-5 h-5 group-hover:text-[#247cff] transition-colors duration-200" />
-            <span className="font-medium">Explore</span>
-          </Link>
-
-          <Link
-            to="/help"
-            className="flex items-center p-3 space-x-4 text-customGrey rounded-lg hover:bg-[#3D3D7E] transition-colors duration-200 group"
-          >
-            <HelpCircle className="w-5 h-5 group-hover:text-[#247cff] transition-colors duration-200" />
-            <span className="font-medium">Help</span>
-          </Link>
-          <Link
-            to="/help"
-            className="flex items-center p-3 space-x-4 text-customGrey rounded-lg hover:bg-[#3D3D7E] transition-colors duration-200 group"
-          >
-            <BellIcon className="w-5 h-5 group-hover:text-[#247cff] transition-colors duration-200" />
-            <span className="font-medium">Notification</span>
           </Link>
         </nav>
 

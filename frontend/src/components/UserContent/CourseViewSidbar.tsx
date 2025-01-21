@@ -25,7 +25,7 @@ const CourseViewSidebar: React.FC<SidebarProps> = ({ chapters }) => {
   };
 
   return (
-    <div className={`fixed top-24 left-5 h-full bg-customGrey shadow-lg border-2 border-white transition-all duration-300 ease-in-out rounded-lg 
+    <div className={`fixed top-24 left-5 h-full bg-white shadow-lg border-2 border-white transition-all duration-300 ease-in-out rounded-lg 
       ${isOpen ? 'w-64' : 'w-16'} z-50`}>
       <button 
         onClick={toggleSidebar} 

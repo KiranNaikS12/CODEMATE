@@ -48,7 +48,7 @@ const AcessCourse: React.FC = () => {
     }
 
     return (
-        <div className='flex flex-col w-full min-h-screen bg-customGrey'>
+        <div className='flex flex-col w-full min-h-screen bg-gray-200'>
             <Header />
 
             {/* SIDEBAR */}
@@ -94,7 +94,7 @@ const AcessCourse: React.FC = () => {
                     </div>
 
 
-                    <div className='flex flex-col p-2 px-4 bg-customGrey'>
+                    <div className='flex flex-col p-2 px-4 bg-white'>
                         <div className='flex justify-start'>
                             <h1 className='text-xl font-medium text-gray-600'>About Course</h1>
                         </div>
