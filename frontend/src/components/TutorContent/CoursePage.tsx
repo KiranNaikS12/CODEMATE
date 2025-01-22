@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { EllipsisVertical, Plus, Edit, Trash, ActivitySquare } from "lucide-react";
 import { Link } from "react-router-dom";
-import {  useListMyCourseQuery, useUpdateCourseStatusMutation } from "../../services/tutorApiSlice";
+import { useListMyCourseQuery, useUpdateCourseStatusMutation } from "../../services/tutorApiSlice";
 import { CourseTypes } from "../../types/courseTypes";
 import { AnimatePresence, motion } from "framer-motion";
 import { APIError } from "../../types/types";
@@ -14,23 +14,36 @@ const CoursePage: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [isExpand, setIsExpand] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [totalCourse, setTotalCourse] = useState(0);
   const [localCourse, setLocalCourse] = useState<CourseTypes[]>([]);
   const id = tutorInfo?._id;
-  const { data: courseDetails } = useListMyCourseQuery(id || '', {
-    skip: !id
-  });
+  const { data: courseDetails } = useListMyCourseQuery({
+    id: id!,
+    page: currentPage,
+    limit: itemsPerPage
+  }
+  
+  );
   const [updateCourseStatus] = useUpdateCourseStatusMutation()
 
-  console.log(courseDetails?.data)
+
 
   useEffect(() => {
     if (courseDetails) {
-      setLocalCourse(courseDetails.data)
+      setLocalCourse(courseDetails.data?.courses || []);
+      setTotalCourse(courseDetails.data?.total || 0);
     }
   }, [courseDetails]);
 
   const MAX_DESCRIPTION_LENGTH = 170;
 
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  
   //togle for menubar
   const toggleMenu = (courseTitle: string) => {
     if (menuOpen === courseTitle) {
@@ -88,10 +101,10 @@ const CoursePage: React.FC = () => {
 
   const renderDescription = (description: string | undefined) => {
     if (!description) return null;
-    
+
     const shouldShowViewMore = description.length > MAX_DESCRIPTION_LENGTH;
-    const displayText = isExpand || !shouldShowViewMore 
-      ? description 
+    const displayText = isExpand || !shouldShowViewMore
+      ? description
       : `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`;
 
     return (
@@ -146,7 +159,7 @@ const CoursePage: React.FC = () => {
           </div>
         ) : (
           <>
-            {courseDetails?.data.map((course: CourseTypes) => (
+            {courseDetails?.data.courses.map((course: CourseTypes) => (
               <div className="relative max-w-5xl p-6 mt-6 space-y-4 overflow-auto bg-gray-200 rounded-lg shadow-xl"
                 key={course.title}
               >
@@ -229,6 +242,63 @@ const CoursePage: React.FC = () => {
                 </div>
               </div>
             ))}
+
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between max-w-5xl mt-4 ">
+              <div>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                  className="px-3 py-2 border border-gray-400 rounded-lg shadow-none bg-customGrey focus:outline-none focus:border-hoverColor"
+                >
+                  {[2, 4].map((size) => (
+                    <option key={size} value={size}>
+                      Show {size} rows per page
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center justify-center gap-x-2">
+                {/* previous */}
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={`px-4 py-2 bg-gray-300 rounded-md ${currentPage === 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-400"
+                    }`}
+                >
+                  Previous
+                </button>
+
+                <div className="flex gap-2">
+                  {Array.from({ length: Math.ceil(totalCourse / itemsPerPage) }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`px-4 py-2 rounded-md ${pageNum === currentPage
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-300 hover:bg-gray-400"
+                        }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+                {/* next */}
+                <button
+                  disabled={currentPage === Math.ceil(totalCourse / itemsPerPage)}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={`px-4 py-2 bg-gray-300 rounded-md ${currentPage === Math.ceil(totalCourse / itemsPerPage)
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-400"
+                    }`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </>
         )}
         <div className="flex flex-col min-h-screen p-2">

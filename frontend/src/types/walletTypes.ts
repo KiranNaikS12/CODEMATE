@@ -17,6 +17,7 @@ export interface IWallet {
     totalPurchases: number;
     totalSpent: number;
     isActive: boolean;
+    totalTransactions: number;
 }
 
 export type showWalletDetailsResponse = ApiResponse<IWallet>

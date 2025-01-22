@@ -67,7 +67,9 @@ export class CourseController {
     async listMyCourse(req:Request, res:Response) : Promise<void> {
         try {
             const { id } = req.params;
-            const course = await this.CourseService.listTutorCourse(id);
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 4;
+            const course = await this.CourseService.listTutorCourse(id, page, limit);
             res.status(HttpStatusCode.Ok).json(formatResponse(course, AuthMessages.COURSE_LISTED_SUCCESSFULLY))
 
         } catch (error) {

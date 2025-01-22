@@ -11,7 +11,7 @@ import { IOrder, IOrderResponse, IPopulatedOrder } from "../../types/orderTypes"
 import { IPaymentRepository } from "../../repositories/payment/IPaymentRepository";
 import { IUserRepository } from "../../repositories/user/IUserRepository";
 import { ICourseService } from "./ICourseService";
-import mongoose from "mongoose";
+
 
 
 @injectable()
@@ -133,11 +133,11 @@ export class CourseService implements ICourseService {
             }
         }));    
         
-        // console.log("coursesWithSignedUrls",coursesWithSignedUrls)
         return coursesWithSignedUrls as ICourse[]
     }
 
-    async listTutorCourse(tutorId: string) : Promise<ICourse[]> {
+
+    async listTutorCourse(tutorId: string, page: number, limit: number) : Promise<{ courses: ICourse[]; total: number }> {
         if(!tutorId){
             throw new CustomError(AuthMessages.NO_TUTOR_FOUND, HttpStatusCode.BAD_REQUEST)
         }
@@ -147,10 +147,14 @@ export class CourseService implements ICourseService {
             throw new CustomError(AuthMessages.NO_TUTOR_FOUND, HttpStatusCode.BAD_REQUEST)
         }
         
-        const courses = await this.CourseRepository.find({tutorId: tutor?._id});
+        const {courses, total} = await this.CourseRepository.listPaginatedTutorCourse(
+            tutorId,
+            page,
+            limit
+        );
 
         if(!courses || courses.length === 0) {
-            return [];
+            return { courses: [], total: 0 };
         }
 
         // Convert Mongoose documents to plain objects first
@@ -179,7 +183,10 @@ export class CourseService implements ICourseService {
             }
         }));  
 
-        return coursesWithSignedUrls;
+        return {
+            courses: coursesWithSignedUrls,
+            total
+        }
         
     }
 

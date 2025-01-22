@@ -7,7 +7,7 @@ import { inject, injectable } from 'inversify';
 @injectable()
 export class CourseRepository extends BaseRepository<ICourse> implements ICourseRepository {
 
-   private readonly defaultPropulateOptions: PopulateOptions = {
+   private readonly defaultpopulateOptions: PopulateOptions = {
       path: 'tutorId',
       select: '_id fullname contact email specialization company experience profileImage',
       model: 'Tutor'
@@ -22,8 +22,21 @@ export class CourseRepository extends BaseRepository<ICourse> implements ICourse
    async findTutorByCourseId(courseId: string): Promise<ICourse | null> {
       return await this.findOneWithPopulate(
          {_id: courseId},
-         this.defaultPropulateOptions
+         this.defaultpopulateOptions
       )
+   }
+
+   async listPaginatedTutorCourse(tutorId: string, page: number, limit: number) : Promise<{ courses: ICourse[]; total: number }> {
+      const skip = (page - 1) * limit;
+
+      const [courses, total] = await Promise.all([
+         this.model
+            .find({tutorId})
+            .skip(skip)
+            .limit(limit),
+         this.model.countDocuments({tutorId})
+      ])
+      return { courses, total};
    }
 
    async listCourses(filter?: FilterOptions): Promise<ICourse[]> {
@@ -35,8 +48,9 @@ export class CourseRepository extends BaseRepository<ICourse> implements ICourse
             { title: { $regex: new RegExp(searchTerm, 'i') } },
             { tutorName: { $regex: new RegExp(searchTerm, 'i') } }
          ];
-
       }
       return this.model.find(query)
    }
+
+   
 }

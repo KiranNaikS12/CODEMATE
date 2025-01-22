@@ -14,9 +14,10 @@ export class ManageEnrolledUserController {
 
     async listEnrolledUser(req:Request, res:Response) : Promise<void> {
         try {
-
             const { id } = req.params;
-            const enrolledUsers = await this.ManageEnrolledUser.listEnrolledUser(id);
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 8;
+            const enrolledUsers = await this.ManageEnrolledUser.listEnrolledUser(id, page, limit);
             res.status(HttpStatusCode.Ok).json(formatResponse(enrolledUsers, AuthMessages.USERS_LISTED_SUCCESSFULLY))
         } catch (error) {
             handleErrorResponse(res, error, HttpStatusCode.INTERNAL_SERVER_ERROR)
