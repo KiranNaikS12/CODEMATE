@@ -43,12 +43,18 @@ export class WalletService implements IWalletService {
         return wallet;
     }
 
-    async getWalletInfo (userId: string) : Promise<IWallet> {
+    async getWalletInfo (userId: string, page: number, limit: number) : Promise<Partial<IWallet> & { totalTransactions: number } | null> {
         if(!userId) {
             throw new CustomError(AuthMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
-        const userWallet = await this.WalletRepository.findOne({walletOwner: userId});
+        const skip = (page - 1) * limit;
+
+        const userWallet = await this.WalletRepository.findOneWithPaginatedTransactions(
+            {walletOwner: userId},
+            skip,
+            limit
+        );
         if(!userWallet) {
             throw new CustomError(AuthMessages.WALLET_INFO_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }

@@ -14,4 +14,6 @@ export class TutorRepository extends BaseRepository<ITutor> implements ITutorRep
         super(tutorModel)
     }
 
+    
+
 }

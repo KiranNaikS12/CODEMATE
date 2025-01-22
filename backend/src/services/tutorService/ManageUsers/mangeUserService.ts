@@ -16,7 +16,7 @@ export class ManageEnrolledUser implements IMangeUserService {
         @inject('PaymentRepository') private PaymentRepository: IPaymentRepository
     ){}
 
-    async listEnrolledUser(tutorId: string) : Promise<IUser[]> {
+    async listEnrolledUser(tutorId: string, page: number, limit: number) : Promise<{users: IUser[], total: number}> {
         if(!tutorId) throw new CustomError(AuthMessages.NO_TUTOR_FOUND, HttpStatusCode.NOT_FOUND);
 
         const courses = await this.CourseRepository.find({tutorId: tutorId});
@@ -36,6 +36,14 @@ export class ManageEnrolledUser implements IMangeUserService {
             (user: IUser, index: number, self: IUser[]) => 
                 index === self.findIndex(u => u._id.toString() === user._id.toString())
         )
-        return uniqueUsers;
+        
+        const totalStudents = uniqueUsers.length;
+        const start = (page - 1) * limit;
+        const paginatedUsers = uniqueUsers.slice(start, start + limit);
+
+        return {
+            users: paginatedUsers,
+            total: totalStudents
+        }
     }
 }

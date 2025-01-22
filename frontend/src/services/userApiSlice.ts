@@ -215,10 +215,11 @@ export const apiSlice = createApi({
           body: {userId}
         })
       }),
-      getWalletDetails: builder.query<showWalletDetailsResponse, string>({
-         query: (userId) => ({
+      getWalletDetails: builder.query<showWalletDetailsResponse, {userId: string; page: number; limit: number}>({
+         query: ({userId, page, limit}) => ({
           url:`/users/list-wallet/${userId}`,
           method:'GET',
+          params: {page, limit}
          }),
          providesTags:['Wallet']
       }),

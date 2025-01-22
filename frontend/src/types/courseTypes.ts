@@ -82,6 +82,11 @@ export type AccessCourseTypes = {
     isBlocked:boolean;
 }
 
+export type listMyCourse = {
+    courses: CourseTypes[];
+    total: number
+}
+
 export interface VideoUploadSectionProps {
     values: CourseFormTypes;
     setFieldValue: (field: string, value:unknown) => void;
@@ -91,7 +96,11 @@ export interface PreviewState {
     [key: number]: string[];
 }
 
+
+
 export type showCourseDetailsResponse = ApiResponse<CourseTypes[]>
+
+export type showTutorCourseDetailsResponse = ApiResponse<listMyCourse>
 
 export type showCourseViewResponse = ApiResponse<AccessCourseTypes>
 

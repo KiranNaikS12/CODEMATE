@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { showTutorDetailResponse } from "../types/tutorTypes";
-import { showCourseDetailsResponse } from "../types/courseTypes";
+import { showCourseDetailsResponse, showTutorCourseDetailsResponse } from "../types/courseTypes";
 import { showEnrolledUsersResponse } from "../types/userTypes";
 
 
@@ -100,10 +100,11 @@ export const tutorApiSlice = createApi({
             method:'GET'
         })
        }),
-       listMyCourse: builder.query<showCourseDetailsResponse, string>({
-        query: (id) => ({
+       listMyCourse: builder.query<showTutorCourseDetailsResponse, {id: string; page: number, limit: number}>({
+        query: ({id, page, limit}) => ({
             url:`/tutors/my-course/${id}`,
-            method:'GET'
+            method:'GET',
+            params: { page, limit}
         })
        }),
        updateCourseStatus: builder.mutation({
@@ -113,10 +114,11 @@ export const tutorApiSlice = createApi({
             body:{isBlocked}
         })
        }),
-       getEnrolledUser: builder.query<showEnrolledUsersResponse, string>({
-        query:(tutorId) => ({
+       getEnrolledUser: builder.query<showEnrolledUsersResponse, {tutorId: string, page: number, limit: number}>({
+        query:({tutorId, page, limit}) => ({
             url:`/tutors/get-students/${tutorId}`,
             method:'GET',
+            params: {page, limit}
         })
        })
     }),

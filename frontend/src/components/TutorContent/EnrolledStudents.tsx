@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MessageCircle } from 'lucide-react';
 import TutorChatInterface from './TutorChatInterface';
 import { useSelector } from 'react-redux';
@@ -7,10 +7,15 @@ import { useGetEnrolledUserQuery } from '../../services/tutorApiSlice';
 
 const EnrolledStudents: React.FC = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(8);
+    const [totalStudents, setTotalStudents] = useState(0);
     const tutorInfo = useSelector((state: RootState) => state.tutor.tutorInfo);
     const id = tutorInfo?._id;
-    const { data: studentDetails } = useGetEnrolledUserQuery(id || '', {
-        skip: !id
+    const { data: studentDetails } = useGetEnrolledUserQuery({
+        tutorId: id!,
+        page: currentPage,
+        limit: itemsPerPage
     })
 
     const studentData = studentDetails?.data
@@ -18,6 +23,16 @@ const EnrolledStudents: React.FC = () => {
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen)
     }
+
+    useEffect(() => {
+        if (studentDetails) {
+            setTotalStudents(studentDetails?.data?.total)
+        }
+    }, [studentDetails]);
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    };
 
     return (
         <div className="relative flex-1 p-6 pl-2 overflow-auto">
@@ -40,7 +55,7 @@ const EnrolledStudents: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {studentData?.map((user) => (
+                        {studentData?.users?.map((user) => (
                             <tr
                                 key={user._id}
                                 className="transition duration-300 ease-in-out hover:bg-gray-50"
@@ -66,7 +81,7 @@ const EnrolledStudents: React.FC = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm text-gray-500">{user.country}</div>
-                                    
+
                                 </td>
                                 <td>
                                     <button
@@ -77,11 +92,67 @@ const EnrolledStudents: React.FC = () => {
                                         <span>Chat</span>
                                     </button>
                                 </td>
-                                <TutorChatInterface isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} data={user}  />
+                                <TutorChatInterface isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} data={user} />
                             </tr>
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between max-w-5xl mt-4 ">
+                <div>
+                    <select
+                        value={itemsPerPage}
+                        onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                        className="px-3 py-2 border border-gray-400 rounded-lg shadow-none bg-customGrey focus:outline-none focus:border-hoverColor"
+                    >
+                        {[8, 12].map((size) => (
+                            <option key={size} value={size}>
+                                Show {size} rows per page
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex items-center justify-center gap-x-2">
+                    {/* previous */}
+                    <button
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        className={`px-4 py-2 bg-gray-300 rounded-md ${currentPage === 1
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-400"
+                            }`}
+                    >
+                        Previous
+                    </button>
+
+                    <div className="flex gap-2">
+                        {Array.from({ length: Math.ceil(totalStudents / itemsPerPage) }, (_, i) => i + 1).map((pageNum) => (
+                            <button
+                                key={pageNum}
+                                onClick={() => handlePageChange(pageNum)}
+                                className={`px-4 py-2 rounded-md ${pageNum === currentPage
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-gray-300 hover:bg-gray-400"
+                                    }`}
+                            >
+                                {pageNum}
+                            </button>
+                        ))}
+                    </div>
+                    {/* next */}
+                    <button
+                        disabled={currentPage === Math.ceil(totalStudents / itemsPerPage)}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        className={`px-4 py-2 bg-gray-300 rounded-md ${currentPage === Math.ceil(totalStudents / itemsPerPage)
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-400"
+                            }`}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     )

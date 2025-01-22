@@ -25,7 +25,9 @@ export class WalletController {
     async getWalletInfo (req:Request, res:Response) : Promise<void> {
         try {
             const { id } = req.params;
-            const walletInfo = await this.WalletService.getWalletInfo(id);
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 5;
+            const walletInfo = await this.WalletService.getWalletInfo(id, page, limit);
             res.status(HttpStatusCode.Ok).json(formatResponse(walletInfo, AuthMessages.YOUR_WALLET_ACTIVATED_SUCCESSFULLY));
 
         }   catch (error) {

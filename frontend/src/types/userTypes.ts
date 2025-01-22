@@ -52,9 +52,14 @@ export interface UserAdditional extends User {
     totalSubmission?: TotalSubmission
 }
 
+export interface EnrolledStudents {
+    users: UserAdditional[],
+    total: number;
+}
+
 
 export type showUserDetailsResponse = ApiResponse<UserAdditional>
-export type showEnrolledUsersResponse = ApiResponse<UserAdditional[]>
+export type showEnrolledUsersResponse = ApiResponse<EnrolledStudents>
 
 
 export interface HeaderProps {
