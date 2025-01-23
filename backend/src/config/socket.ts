@@ -107,6 +107,8 @@ export class SocketServiceClass {
 
       // Listen for sendMessage events
       socket.on("send_message", async (message) => {
+        console.log('Message received:', message);
+        const room = [message.senderId, message.receiverId].sort().join("_");
         const { senderId, receiverId, text, timestamp, clientId, images } = message;
         console.log(`Message received: ${text} || ${images} from ${senderId} to ${receiverId} at ${timestamp} having clientId ${clientId}`);
 
@@ -121,7 +123,6 @@ export class SocketServiceClass {
           );
           const savedMessage: IMessage = await this.messageService.saveMessageToDB(preparedMessage);
 
-          const room = [senderId, receiverId].sort().join("_");
 
           // Check if receiver is online in the room
           const receiverSockets = this.userSockets.get(receiverId);

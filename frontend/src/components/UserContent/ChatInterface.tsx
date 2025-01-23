@@ -51,14 +51,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, receiver
   useEffect(() => {
     const setupSocketConnection = async () => {
       try {
-        
-
-        console.log('Current senderId:', senderId); 
-        console.log('Current receiverId:', receiverId);
         await socketService.connect();
-
-        console.log('connected')
-
         // Join room when receiverId is available
         if (receiverId) {
           // console.log("receiverId", receiverId)

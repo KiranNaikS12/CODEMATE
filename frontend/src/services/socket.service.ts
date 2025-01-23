@@ -8,47 +8,40 @@ class SocketService {
 
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (this.socket && this.socket.connected) {
-        resolve();
-        return;
-      }
 
-      if (this.isConnecting) {
-        return;
-      }
+      this.disconnect();
+
+      this.isConnecting = true;
+      console.log("Attempting to connect to socket...");
+
 
       this.isConnecting = true;
       console.log("Attempting to connect to socket...");
 
       this.socket = io(import.meta.env.VITE_BASE_URL, {
         withCredentials: true,
-        transports: ["websocket"],
+        transports: ["websocket", "polling"],
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
+        timeout: 5000
       });
 
       this.socket.on("connect", () => {
-        console.log("Socket connected:", this.socket?.id);
-        this.isConnecting = false;
         resolve();
       });
 
       this.socket.on("connect_error", (err) => {
-        console.error("Socket connection error:", err);
-        this.isConnecting = false;
         reject(err);
       });
 
       this.socket.on("disconnect", (reason) => {
-        console.log("Socket disconnected:", reason);
         if (reason === "io server disconnect") {
-          // the disconnection was initiated by the server, need to reconnect manually
           this.socket?.connect();
         }
       });
 
-
+      this.socket.connect();
     });
   }
 
@@ -72,9 +65,11 @@ class SocketService {
 
   //sending message:
   sendMessage(data: Message) {
+    const room = [data.senderId, data.receiverId].sort().join("_");
     if (this.isConnected()) {
       this.socket?.emit("send_message", {
         ...data,
+        room,
         timestamp: new Date().toISOString()
       }
       );
@@ -314,6 +309,7 @@ class SocketService {
       console.log('ICE candidate sent');
     }
   }
+  
 
 }
 
