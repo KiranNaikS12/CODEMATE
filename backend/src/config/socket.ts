@@ -6,6 +6,7 @@ import express from "express";
 import "reflect-metadata";
 import { IMessage } from "../types/messageTypes";
 import { IMessageService } from "../services/messageService/IMessageService";
+import { CallStatus } from "../types/videoCallHistoryTypes";
 
 
 @injectable()
@@ -66,6 +67,13 @@ export class SocketServiceClass {
         } catch (error) {
           console.error("Error send ing message:", error);
           socket.emit("error", { message: "Failed to get message." });
+        }
+
+        try {
+          const callHistory = await this.messageService.getCallHistory(senderId, receiverId);
+          socket.emit('load_call_history', callHistory)
+        } catch (error) {
+          console.error("Failed to load call history", error);
         }
 
         //Track users's socket connection
@@ -149,8 +157,8 @@ export class SocketServiceClass {
       });
 
 
-      //Listen for video_call_request_event
-      socket.on("video_call_request", ({ senderId, receiverId, room }) => {
+      //**********Listen for video_call_request_event**********
+      socket.on("video_call_request", async ({ senderId, receiverId, room, timestamp }) => {
         socket.join(room);
 
         const data = {
@@ -158,56 +166,86 @@ export class SocketServiceClass {
           receiverId
         }
 
-        const receiverSockets = this.userSockets.get(receiverId);
-
-        if (receiverSockets && receiverSockets.size > 0) {
-          receiverSockets.forEach(socketId => {
-            this.io?.to(socketId).emit("incoming_call", data);
-            console.log('call request received for the receiver', data.receiverId);
-
-          });
-        } else {
-          console.log(`Receiver ${receiverId} is not online`);
+        try {
+          const callHistoryData = await this.messageService.prepareCallHistory(
+            receiverId,
+            senderId,
+            CallStatus.Sent,
+            timestamp
+          );
+          await this.messageService.createCallHistory(callHistoryData);
+          const receiverSockets = this.userSockets.get(receiverId);
+          if (receiverSockets && receiverSockets.size > 0) {
+            receiverSockets.forEach(socketId => {
+              this.io?.to(socketId).emit("incoming_call", data);
+              console.log('call request received for the receiver', data.receiverId);
+            });
+          } else {
+            console.log(`Receiver ${receiverId} is not online`);
+          }
+        } catch (error) {
+          console.error("Error creating call history:", error);
         }
       });
 
 
       //list for video_call_accept event
-      socket.on("video-call-accept", ({ senderId, receiverId, room }) => {
+      socket.on("video-call-accept", async ({ senderId, receiverId, room }) => {
         socket.join(room);
         const data = {
           senderId,
           receiverId
         }
 
-        const receiverSockets = this.userSockets.get(receiverId);
-        if (receiverSockets && receiverSockets.size > 0) {
-          receiverSockets.forEach(socketId => {
-            this.io?.to(socketId).emit("call_accepted", data);
-            console.log('call request received for the receiver', data.receiverId);
+        try {
+          await this.messageService.updateCallHistory(
+            senderId,
+            receiverId,
+            CallStatus.Accepted
+          )
 
-          });
-        } else {
-          console.log(`Receiver ${receiverId} is not online`);
+          const receiverSockets = this.userSockets.get(receiverId);
+          if (receiverSockets && receiverSockets.size > 0) {
+            receiverSockets.forEach(socketId => {
+              this.io?.to(socketId).emit("call_accepted", data);
+            });
+          } else {
+            console.log(`Receiver ${receiverId} is not online`);
+          }
+
+        } catch (error) {
+          console.error("Error updating call history:", error);
         }
       });
 
 
       //list for video_call_reject event
-      socket.on("video-call-reject", ({ senderId, receiverId, room }) => {
+      socket.on("video-call-reject", async ({ senderId, receiverId, room }) => {
         socket.join(room);
         const data = {
           senderId,
           receiverId
         }
 
-        const receiverSockets = this.userSockets.get(receiverId);
-        if (receiverSockets && receiverSockets.size > 0) {
-          receiverSockets.forEach(socketId => {
-            this.io?.to(socketId).emit("call_rejected", data);
-          });
-        } else {
-          console.log(`Receiver ${receiverId} is not online`);
+        try {
+
+          await this.messageService.updateCallHistory(
+            senderId,
+            receiverId,
+            CallStatus.Rejected
+          )
+
+          const receiverSockets = this.userSockets.get(receiverId);
+          if (receiverSockets && receiverSockets.size > 0) {
+            receiverSockets.forEach(socketId => {
+              this.io?.to(socketId).emit("call_rejected", data);
+            });
+          } else {
+            console.log(`Receiver ${receiverId} is not online`);
+          }
+
+        } catch (error) {
+          console.error("Error updating call history:", error);
         }
       });
 
@@ -217,12 +255,12 @@ export class SocketServiceClass {
         console.log('offer received', data.senderId, data.receiverId)
         socket.to(data.room).emit('webrtc-offer', data);
       });
-      
+
       socket.on('webrtc-answer', (data) => {
         console.log('answer listened', data.senderId, data.receiverId)
         socket.to(data.room).emit('webrtc-answer', data);
       });
-      
+
       socket.on('webrtc-ice-candidate', (data) => {
         console.log('ice-candidate listened', data.senderId, data.receiverId)
         socket.to(data.room).emit('webrtc-ice-candidate', data);
@@ -236,7 +274,7 @@ export class SocketServiceClass {
           senderId,
           receiverId
         }
-      
+
         const receiverSockets = this.userSockets.get(receiverId);
         if (receiverSockets && receiverSockets.size > 0) {
           receiverSockets.forEach(socketId => {

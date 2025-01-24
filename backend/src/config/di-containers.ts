@@ -115,6 +115,10 @@ import { ITutorApprovalService } from "../services/tutorService/tutorApproval/IT
 import { IAuthService } from "../services/authService/IAuthService";
 import { IReviewRepository } from "../repositories/reviews/IReviewRepository";
 import { ReviewRepository } from "../repositories/reviews/reviewRepository";
+import { ICallHistory } from "../types/videoCallHistoryTypes";
+import callHistroyModel from "../models/callHistroyModel";
+import { ICallHistoryRepository } from "../repositories/callHistroy/ICallHistoryRepository";
+import { CallHistoryRepository } from "../repositories/callHistroy/callHistoryRepository";
 
 
 
@@ -138,6 +142,7 @@ container.bind<mongoose.Model<IReview>>('ReviewModel').toConstantValue(reviewMod
 container.bind<mongoose.Model<IFeedback>>('FeedbackModel').toConstantValue(feedbackModel);
 container.bind<mongoose.Model<IProblemReview>>('ProblemReviewModel').toConstantValue(problemReviewModel);
 container.bind<mongoose.Model<IMessage>>('MessageModel').toConstantValue(messageModel);
+container.bind<mongoose.Model<ICallHistory>>('callHistroyModel').toConstantValue(callHistroyModel)
 
 // Repositories
 container.bind<IAuthRepository>('AuthRepository').to(AuthRepository);
@@ -153,31 +158,32 @@ container.bind<IReviewRepository>('ReviewRepository').to(ReviewRepository);
 container.bind<IFeedbackRepository>('FeedbackRepository').to(FeedbackRepository);
 container.bind<IProblemReviewRepository>('ProblemReviewRepository').to(ProblemReviewRepository);
 container.bind<IMessageRepository>('MessageRepository').to(MessageRepository);
+container.bind<ICallHistoryRepository>('CallHistoryRepository').to(CallHistoryRepository)
 
 // Services
-container.bind<IEmailService>('EmailService').to(EmailService); //DONE
-container.bind<IAuthService>('AuthService').to(AuthService);  // DONE
-container.bind<IAuthAdminService>('AuthAdminService').to(AuthAdminService) //DONE
-container.bind<IAdminRelatedUserService>('ManageUserService').to(ManageUserService)  //DONE
-container.bind<IAdminRelatedTutorService>('ManageTutorService').to(ManageTutorService) //DONE
-container.bind<ITutorApprovalService>('TutorApprovalService').to(TutorApprovalService) //DONE
-container.bind<CloudinaryService>('CloudinaryService').to(CloudinaryService); //2 
-container.bind<IUserService>('UserService').to(UserService);  //DONE
-container.bind<ITutorService>('TutorService').to(tutorService); //DONE
-container.bind<IProblemService>('ProblemService').to(ProblemService) //DONE
-container.bind<IRedisConfig>(TYPES.RedisConfig).toConstantValue(redisConfig) //DONE
-container.bind<ITokenBlacklistService>('TokenBlacklistService').to(TokenBlacklistService); //DONE
-container.bind<ICourseService>('CourseService').to(CourseService); //DONE
-container.bind<IHashService>('HashService').to(HashService); //DONE
-container.bind<ICartService>('CartService').to(CartService); //DONE
-container.bind<IWishlistservice>('WishlistService').to(WishlistService); //DONE
-container.bind<IPayemntService>('PayementService').to(PayementService); //DONE
-container.bind<IWalletService>('WalletService').to(WalletService); //DONE
-container.bind<IReviewService>('ReviewService').to(ReviewService);  //DONE
-container.bind<IProblemFeedbackService> ('ProblemFeedbackService').to(ProblemFeedbackService); //DONE
-container.bind<IMessageService>("MessageService").to(MessageService); //DONE
+container.bind<IEmailService>('EmailService').to(EmailService); 
+container.bind<IAuthService>('AuthService').to(AuthService);  
+container.bind<IAuthAdminService>('AuthAdminService').to(AuthAdminService) 
+container.bind<IAdminRelatedUserService>('ManageUserService').to(ManageUserService)  
+container.bind<IAdminRelatedTutorService>('ManageTutorService').to(ManageTutorService) 
+container.bind<ITutorApprovalService>('TutorApprovalService').to(TutorApprovalService) 
+container.bind<CloudinaryService>('CloudinaryService').to(CloudinaryService); 
+container.bind<IUserService>('UserService').to(UserService);  
+container.bind<ITutorService>('TutorService').to(tutorService); 
+container.bind<IProblemService>('ProblemService').to(ProblemService) 
+container.bind<IRedisConfig>(TYPES.RedisConfig).toConstantValue(redisConfig) 
+container.bind<ITokenBlacklistService>('TokenBlacklistService').to(TokenBlacklistService); 
+container.bind<ICourseService>('CourseService').to(CourseService); 
+container.bind<IHashService>('HashService').to(HashService); 
+container.bind<ICartService>('CartService').to(CartService); 
+container.bind<IWishlistservice>('WishlistService').to(WishlistService); 
+container.bind<IPayemntService>('PayementService').to(PayementService); 
+container.bind<IWalletService>('WalletService').to(WalletService); 
+container.bind<IReviewService>('ReviewService').to(ReviewService);  
+container.bind<IProblemFeedbackService> ('ProblemFeedbackService').to(ProblemFeedbackService); 
+container.bind<IMessageService>("MessageService").to(MessageService); 
 container.bind<SocketServiceClass>('SocketService').to(SocketServiceClass);
-container.bind<ITutorRelated>('ManageEnrolledUser').to(ManageEnrolledUser) //DONE
+container.bind<ITutorRelated>('ManageEnrolledUser').to(ManageEnrolledUser) 
 
 // Controllers
 container.bind<AuthController>('AuthController').to(AuthController);

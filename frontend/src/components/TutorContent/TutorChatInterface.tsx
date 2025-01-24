@@ -14,10 +14,10 @@ interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
   data: UserAdditional
-
+  studentId: string;
 }
 
-const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, data }) => {
+const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, data, studentId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState<string>("");
@@ -32,6 +32,8 @@ const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, dat
   const fileInputRef = useRef<HTMLInputElement>(null);
   const senderId = useSelector((state: RootState) => state.tutor.tutorInfo)
   const receiverId = data?._id;
+
+  
 
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,6 +54,7 @@ const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, dat
 
         // Join room when receiverId is available
         if (receiverId) {
+          console.log('reciverId', receiverId)
           socketService.joinRoom(senderId!._id, receiverId);
 
           socketService.markMessagesAsRead(senderId!._id, receiverId)
@@ -134,7 +137,7 @@ const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, dat
       socketService.offUserStatusChange();
       socketService.cleanupCallListeners();
     };
-  }, [receiverId, senderId]);
+  }, [receiverId, senderId, studentId]);
 
 
   useEffect(() => {
@@ -290,7 +293,7 @@ const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, dat
 
 
   return (
-    <div className={`fixed top-28 right-2 flex flex-col h-[600px] bg-white w-[400px] rounded-lg transition-all duration-300 ease-in-out border shadow-left   ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'}`}>
+    <div className={`fixed top-28 right-2 flex flex-col h-[600px] bg-white w-[400px] rounded-lg transition-all duration-300 ease-in-out border shadow-left z-50`}>
       {/* Chat Header */}
       <div className="flex items-center justify-between p-4 rounded-t-lg bg-gradient-to-r from-blue-400 to-purple-300">
         <div className="flex items-center space-x-3">
@@ -339,7 +342,7 @@ const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, dat
         )}
         {isIncomingcallResponse && (
           <div className='relative overflow-visible'>
-            <VideoCallResponseHandler senderId = {senderId!._id} receiverId = {receiverId}/>
+            <VideoCallResponseHandler senderId={senderId!._id} receiverId={receiverId} />
           </div>
         )}
         {receiverTyping && (
@@ -350,7 +353,7 @@ const TutorChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, dat
               <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
             </div>
           </div>
-          
+
         )}
       </div>
 
