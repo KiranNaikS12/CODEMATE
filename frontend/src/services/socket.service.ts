@@ -309,6 +309,32 @@ class SocketService {
       console.log('ICE candidate sent');
     }
   }
+
+  //*********Events for handling End Call************
+  endVideoCall(senderId: string, receiverId: string) {
+    if (this.isConnected()){
+      const room = [senderId, receiverId].sort().join("_");
+      this.socket?.emit("video-call-end", {
+        senderId,
+        receiverId,
+        room
+      })
+    }
+  }
+
+  listenForCallEnd(callback: (data: {senderId: string, receiverId: string}) => void) : void {
+    if(!this.socket) return;
+    this.socket?.off("call_ended");
+    this.socket?.on("call_ended", (data) => {
+      callback(data);
+    })
+  }
+
+  cleanUpCallEndListener(): void {
+    if (this.socket) {
+      this.socket?.off("call_ended");
+    }
+  }
   
 
 }

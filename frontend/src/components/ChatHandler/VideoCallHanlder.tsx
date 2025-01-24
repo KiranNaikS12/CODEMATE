@@ -11,7 +11,7 @@ interface VideoCallHandlerProps {
 }
 
 const VideoCallHandler: React.FC<VideoCallHandlerProps> =
-    ({ isVideoCallActive }) => {
+    ({ isVideoCallActive, senderId, receiverId }) => {
         const [isRequestAccepted, setIsRequestAccepted] = useState<boolean>(false);
         const [isCallRejected, setIsCallRejected] = useState<boolean>(false);
         const [isAction, setIsAction] = useState<boolean>(true);
@@ -34,12 +34,12 @@ const VideoCallHandler: React.FC<VideoCallHandlerProps> =
                 }
             });
 
-            const handleRejectedCall = (data: { senderId: string, receiverId: string}) => {
+            const handleRejectedCall = (data: { senderId: string, receiverId: string }) => {
                 console.log("Incoming call data:", data);
                 setIsRequestAccepted(false);
                 setIsCallRejected(true);
             }
-      
+
             socketService.listenForIgnoredEvent(handleRejectedCall);
 
 
@@ -54,15 +54,27 @@ const VideoCallHandler: React.FC<VideoCallHandlerProps> =
                 await webRTCService.handleIncomingIceCandidate(data.candidate);
             });
 
+            socketService.listenForCallEnd(() => {
+                webRTCService.cleanup();
+                setIsRequestAccepted(false);
+            });
+
 
             return () => {
                 socketService.cleanUpListenForAcceptCall();
                 socketService.cleanUpListenForRejectedCall();
+                socketService.cleanUpCallEndListener();
                 socketService.socket?.off('webrtc-answer');
                 socketService.socket?.off('webrtc-ice-candidate');
                 webRTCService.cleanup();
             }
         }, []);
+
+        const handleEndCall = () => {
+            socketService.endVideoCall(senderId!, receiverId!);
+            webRTCService.cleanup();
+            setIsRequestAccepted(false);
+        }
 
 
         return (
@@ -78,7 +90,7 @@ const VideoCallHandler: React.FC<VideoCallHandlerProps> =
                     {isCallRejected && (
                         <div className="flex items-center py-1 space-x-2">
                             <span className="text-sm text-red-500 animate-pulse">
-                                Call has been rejected 
+                                Call has been rejected
                             </span>
                         </div>
                     )}
@@ -87,10 +99,7 @@ const VideoCallHandler: React.FC<VideoCallHandlerProps> =
                     <VideoFeed
                         localStream={webRTCService.getLocalStream()}
                         remoteStream={webRTCService.getRemoteStream()}
-                        onEndCall={() => {
-                            webRTCService.cleanup();
-                            setIsRequestAccepted(false);
-                        }}
+                        onEndCall={handleEndCall}
                     />
                 )}
             </>

@@ -27,13 +27,6 @@ const VideoCallResponseHandler: React.FC<VideoCallResponseHandlerProps> = ({ sen
             // Create peer connection (not as initiator)
             await webRTCService.createPeerConnection(false, senderId, receiverId);
             setIsRequestAccepted(true);
-
-            // const stream = await getStream();
-            // if (stream) {
-            //     streamRef.current = stream;
-            //     showMyFeed(videoRef.current, stream);
-            // }
-
             setIsAction(false);
             setIsSeen(false);
 
@@ -43,8 +36,6 @@ const VideoCallResponseHandler: React.FC<VideoCallResponseHandlerProps> = ({ sen
     }
 
     useEffect(() => {
-        console.log('Must listen for offer and ICECandidate')
-        
         // Must listen for offer and ICE candidates
         socketService.socket?.on('webrtc-offer', async (data) => {
             console.log('Received WebRTC offer');
@@ -73,12 +64,18 @@ const VideoCallResponseHandler: React.FC<VideoCallResponseHandlerProps> = ({ sen
                 console.error('Error handling ICE candidate:', error);
             }
         });
+
+        socketService.listenForCallEnd(() => {
+            webRTCService.cleanup();
+            setIsRequestAccepted(false);
+        })
     
 
         return () => {
             socketService.socket?.off('webrtc-offer');
             socketService.socket?.off('webrtc-ice-candidate');
             socketService.socket?.off('webrtc-ice-candidate');
+            socketService.cleanUpCallEndListener();
             webRTCService.cleanup();
         };
     }, []);
@@ -91,19 +88,11 @@ const VideoCallResponseHandler: React.FC<VideoCallResponseHandlerProps> = ({ sen
         setIsSeen(false); 
     }
 
-    // const handleEndCall = async () => {
-    //     if (!senderId || !receiverId) return;
-    //     setIsRequestAccepted(false);
-    //     stopMyFeed(videoRef.current, streamRef.current);
-    //     streamRef.current = null;
-    // }
-
-    // const handeResolution = async (height: number, width: number) => {
-    //     if (!senderId || !receiverId) return;
-    //     changeVideoSize(streamRef.current, height, width)
-    // }
-
-    
+    const handleEndCall = () => {
+        socketService.endVideoCall(senderId!, receiverId!);
+        webRTCService.cleanup();
+        setIsRequestAccepted(false);
+    }
 
     return (
         <>
@@ -130,10 +119,7 @@ const VideoCallResponseHandler: React.FC<VideoCallResponseHandlerProps> = ({ sen
                 <VideoFeed
                     localStream={webRTCService.getLocalStream()}
                     remoteStream={webRTCService.getRemoteStream()}
-                    onEndCall={() => {
-                        webRTCService.cleanup();
-                        setIsRequestAccepted(false);
-                    }}
+                    onEndCall={handleEndCall}
                 />
             )}
         </>

@@ -229,6 +229,22 @@ export class SocketServiceClass {
       });
 
 
+      //*********Events for handling End-Video Call************
+      socket.on("video-call-end", ({ senderId, receiverId, room }) => {
+        socket.join(room)
+        const data = {
+          senderId,
+          receiverId
+        }
+      
+        const receiverSockets = this.userSockets.get(receiverId);
+        if (receiverSockets && receiverSockets.size > 0) {
+          receiverSockets.forEach(socketId => {
+            this.io?.to(socketId).emit("call_ended", data);
+          });
+        }
+      });
+
       // Handle disconnection
       socket.on("disconnect", () => {
         this.userSockets.forEach((sockets, userId) => {
