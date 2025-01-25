@@ -16,12 +16,14 @@ export class ManageUserService implements IMangeUserService {
         @inject('UserRepository') private UserRepository: IUserRepository
     ) {}
 
-    async listUsers(filters: FilterOptions): Promise<IUser[]>  {
-        const users = await this.AuthRepository.findByUsers(filters);
-        if(!users || users.length < 1){
-            return []
+    async listUsers(filters: FilterOptions, page: number, limit: number): Promise<{users: IUser[], totalUsers: number }> {
+        const result = await this.AuthRepository.findByUsers(filters, page, limit);
+        
+        if(!result.users || result.users.length < 1){
+            return { users: [], totalUsers: 0 }
         }  
-        return users;
+        
+        return result;
     }
 
     async updateUsers(id:string, isBlocked: boolean): Promise<IUser> {

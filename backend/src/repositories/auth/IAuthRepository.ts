@@ -5,7 +5,7 @@ import { ITutor, TutorFilterQuery } from "../../types/tutorTypes";
 
 
 export interface IAuthRepository extends IBaseRepository<IUser | ITutor> {
-    findByUsers(filter?: UserFilterQuery): Promise<IUser[]>;
+    findByUsers(filter?: UserFilterQuery, page?: number, limit?: number): Promise<{users: IUser[], totalUsers: number}>
     findByTutors(filter?: TutorFilterQuery): Promise<ITutor[]>;
     checkExistingEmail(email: string, roleId: Role): Promise<IUser | ITutor | null >
     findByEmail(email: string): Promise<IUser | ITutor | null>;

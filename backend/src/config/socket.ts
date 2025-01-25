@@ -8,13 +8,16 @@ import { IMessage } from "../types/messageTypes";
 import { IMessageService } from "../services/messageService/IMessageService";
 import { CallStatus } from "../types/videoCallHistoryTypes";
 
+interface CustomSocket extends Socket {
+  userId?: string;
+}
 
 @injectable()
 export class SocketServiceClass {
   private io: Server | null = null;
   private offlineMessages: Record<string, any[]> = {};
   private userSockets: Map<string, Set<string>> = new Map();
-
+  private userOnlineStatus: Record<string, "Online" | "Offline"> = {};
 
   constructor(
     @inject("MessageService") private messageService: IMessageService,
@@ -40,8 +43,14 @@ export class SocketServiceClass {
       }
     });
 
-    this.io.on("connection", (socket) => {
+    this.io.on("connection", (socket: CustomSocket) => {
       console.log("A user connected", socket.id);
+
+      const userId = socket.handshake.query.userId as string;
+
+      socket.userId = userId;
+
+      this.userOnlineStatus[socket.userId] = 'Online';
 
       // Joining room based on sender and receiver's IDs
       socket.on("join_room", async ({ senderId, receiverId }) => {
@@ -49,9 +58,17 @@ export class SocketServiceClass {
 
         const room = [senderId, receiverId].sort().join("_");
         socket.join(room);
-        console.log(`${socket.id} joined room: ${room}`);
-        this.io?.to(room).emit("user_status", { userId: senderId, status: "Online" });
 
+        this.io?.to(room).emit("user_status", { userId: senderId, status: this.userOnlineStatus[senderId] });
+        this.io?.to(room).emit("user_status", { userId: receiverId, status: this.userOnlineStatus[receiverId] });
+
+        //Track users's socket connection
+        if (!this.userSockets.has(senderId)) {
+          this.userSockets.set(senderId, new Set());
+        }
+
+        this.userSockets.get(senderId)?.add(socket.id);
+       
         try {
           const messages = await this.messageService.getPreviousMessages(senderId, receiverId)
           socket.emit('load_messages', messages);
@@ -65,32 +82,20 @@ export class SocketServiceClass {
           })
 
         } catch (error) {
-          console.error("Error send ing message:", error);
           socket.emit("error", { message: "Failed to get message." });
         }
 
         try {
-          const callHistory = await this.messageService.getCallHistory(senderId, receiverId);
-          socket.emit('load_call_history', callHistory)
+          const callHistory = await this.messageService.getCallHistory(senderId);
+          socket.emit('load_call_history', callHistory || [])
         } catch (error) {
           console.error("Failed to load call history", error);
         }
 
-        //Track users's socket connection
-        if (!this.userSockets.has(senderId)) {
-          this.userSockets.set(senderId, new Set())
-        }
-
-        this.userSockets.get(senderId)?.add(socket.id);
-
         // Send offline messages if available
         this.sendOfflineMessages(senderId, socket)
 
-        //emit status for other connected users
-        this.io?.emit("user_status", { userId: senderId, status: "Online" });
       });
-
-
 
 
       socket.on("mark_messages_read", async ({ senderId, receiverId }) => {
@@ -115,7 +120,6 @@ export class SocketServiceClass {
 
       // Listen for sendMessage events
       socket.on("send_message", async (message) => {
-        console.log('Message received:', message);
         const room = [message.senderId, message.receiverId].sort().join("_");
         const { senderId, receiverId, text, timestamp, clientId, images } = message;
         console.log(`Message received: ${text} || ${images} from ${senderId} to ${receiverId} at ${timestamp} having clientId ${clientId}`);
@@ -285,17 +289,22 @@ export class SocketServiceClass {
 
       // Handle disconnection
       socket.on("disconnect", () => {
-        this.userSockets.forEach((sockets, userId) => {
-          sockets.delete(socket.id);
-          if (sockets.size === 0) {
-            this.userSockets.delete(userId);
-
-            this.io?.emit("user_status", { userId, status: "Offline" })
+        // Find which user's socket is disconnecting
+        for (const [userId, sockets] of this.userSockets.entries()) {
+          if (sockets.has(socket.id)) {
+            sockets.delete(socket.id);
+            
+            // Only emit offline if NO sockets remain for this user
+            if (sockets.size === 0) {
+              this.userOnlineStatus[userId] = 'Offline';
+              this.userSockets.delete(userId);
+              this.io?.emit("user_status", { userId, status: "Offline", excludeSocketId: socket.id });
+            }
+            break; 
           }
-        });
+        }
 
-
-        console.log("A user disconnected", socket.id);
+        console.log('user got disconnected')
       });
     });
   }

@@ -1,4 +1,4 @@
-import { Model, Document } from 'mongoose';
+import mongoose, { Model, Document } from 'mongoose';
 import { inject, injectable } from 'inversify';
 import { BaseRepository } from '../base/baseRepository';
 import { ICallHistoryRepository } from './ICallHistoryRepository';
@@ -24,4 +24,5 @@ export class CallHistoryRepository extends BaseRepository<ICallHistory> implemen
         return existingCallHistory;
     }
 
+    
 }

@@ -68,14 +68,14 @@ export class AuthAdminService implements IAuthAdminService {
     }
 
     async getDashStats () : Promise<AdminDashStats> {
-        const userCounts = (await this.AuthRepository.findByUsers({})).length;
+        const {users: userCounts} = await this.AuthRepository.findByUsers();
         const tutorCounts = (await this.AuthRepository.findByTutors({})).length;
         const {total: problemCounts} = await this.problemRepository.totalProblems();
         const courseCounts = (await this.courseRepository.find({})).length;
 
 
         return {
-            userCounts,
+            userCounts: userCounts.length,
             tutorCounts,
             problemCounts,
             courseCounts,

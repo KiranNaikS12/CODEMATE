@@ -137,5 +137,8 @@ export const AuthMessages = {
     ERROR_UPLOADING_FILES_TO_S3: 'Error uploading files to S3',
     FETCHED_DASHBOARD_STATS_SUCCESSFULLY: 'Fetched dashboard stat successfully',
     ORDER_ALREADY_IN_PROGRESS: 'Order already in progress..',
-    ORDER_CONFLICT: 'Course already purchased'
+    ORDER_CONFLICT: 'Course already purchased',
+    FAILED_TO_SAVE_CALL_HISTORY: 'Failed to save call history',
+    FAILED_TO_UPDATE_CALL_HISTORY: 'Failed to updated call history',
+    FAILED_TO_FETCH_CALL_HISTORY:'Failed to fetch call history'
 };      

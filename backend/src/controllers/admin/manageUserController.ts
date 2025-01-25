@@ -16,10 +16,16 @@ export class ManageUserController {
 
     async listUsers(req:Request,res:Response) : Promise<void> {
         try{
+            const { searchTerm, page, limit} = req.query as Record<string, string>;
+
             const filters: FilterOptions = {
-                searchTerm: req.query.searchTerm as string || ''
+                searchTerm: searchTerm?.trim() || '',
             }
-            const users = await this.ManageUserService.listUsers(filters)
+
+            const pageNum = page ? parseInt(page) : 1;
+            const limitNum = limit ? parseInt(limit) : 8;
+
+            const users = await this.ManageUserService.listUsers(filters, pageNum, limitNum)
             res.status(HttpStatusCode.Ok).json(formatResponse(users,AuthMessages.USERS_LISTED_SUCCESSFULLY))
         }catch(error){
             handleErrorResponse(res, error, HttpStatusCode.INTERNAL_SERVER_ERROR)

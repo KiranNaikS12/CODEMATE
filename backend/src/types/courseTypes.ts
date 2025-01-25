@@ -42,6 +42,8 @@ export interface VideoUploadInfo {
 
 export interface FilterOptions {
     searchTerm?: string; 
+    page?: number;
+    limit?: number;
 }
 
 export interface ICourseData {

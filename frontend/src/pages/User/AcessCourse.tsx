@@ -3,29 +3,51 @@ import Header from '../../components/Headers/Header'
 import { useViewCourseDataQuery } from '../../services/userApiSlice';
 import { useParams } from 'react-router-dom';
 import CourseViewSidebar from '../../components/UserContent/CourseViewSidbar';
-import { File, Globe, UserCircle, Video, Play, MessageCircle } from 'lucide-react';
+import { File, Globe, UserCircle, Video, Play, MessageCircle, PhoneCall } from 'lucide-react';
 import ChatInterface from '../../components/UserContent/ChatInterface';
 import UserNotFound from '../CommonPages/UserNotFound';
 import { ErrorData } from '../../types/types';
+import ListCallHistory from '../../components/ChatHandler/ListCallHistory';
+import socketService from '../../services/socket.service';
+import { ICallHistory } from '../../types/callHistoryTypes';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 
 const AcessCourse: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const userInfo = useSelector((state: RootState) => state.auth.userInfo)
     const { data: courseResponse, isError, error } = useViewCourseDataQuery(id!);
     const courseDetail = courseResponse?.data;
-    console.log('courseDetails', courseDetail)
     const receiverId = courseDetail?.tutorId._id;
-
-    console.log(receiverId)
-
     const [currentVideoUrl, setCurrentVideoUrl] = useState<string>('');
-    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false);                         
+    const [isChatHistoryOpen, setIsChatHistoryOpen] = useState<boolean>(false);
+    const [history, setHistory] = useState<ICallHistory[]>([]);
+
+    const userId = userInfo?._id;
 
     useEffect(() => {
         if (courseDetail?.chapters?.[0]?.videos?.[0]?.video) {
             setCurrentVideoUrl(courseDetail.chapters[0].videos[0].video);
         }
-    }, [courseDetail]);
+
+        if(receiverId) {
+            const currentUserId = userId;
+            if(currentUserId){
+                socketService.loadCallHistory((callHistories) => {
+                    setHistory(callHistories)
+                })
+            }
+        }
+
+        return () => {
+            socketService.unloadCallHistory();
+        }
+
+    }, [courseDetail, receiverId, userId]);
+
+    
 
     // Flatten all videos and exclude the first video
     const upNextVideos = courseDetail?.chapters
@@ -39,6 +61,10 @@ const AcessCourse: React.FC = () => {
 
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen)
+    }
+
+    const toggleCallHistory = () => {
+        setIsChatHistoryOpen(!isChatHistoryOpen)
     }
 
     if (isError || error) {
@@ -62,13 +88,22 @@ const AcessCourse: React.FC = () => {
                 {/* COURSE TITLE */}
                 <div className='flex items-center justify-between'>
                     <h1 className='text-2xl font-bold text-themeColor'>{courseDetail?.title}</h1>
-                    <button
-                        onClick={toggleChat}
-                        className="flex items-center px-4 py-2 space-x-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
-                    >
-                        <MessageCircle className="w-4 h-4" />
-                        <span>Chat</span>
-                    </button>
+                    <div className='flex space-x-2'>
+                        <button
+                            onClick={toggleChat}
+                            className="flex items-center px-4 py-2 space-x-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+                        >
+                            <MessageCircle className="w-4 h-4" />
+                            <span>Chat</span>
+                        </button>
+                        <button
+                            onClick={toggleCallHistory}
+                            className="flex items-center px-4 py-2 space-x-2 transition-colors bg-blue-200 border rounded-lg border-hoverColor"
+                        >
+                            <PhoneCall className="w-4 h-4" />
+                            <span>Call History</span>
+                        </button>
+                    </div>
                     <ChatInterface
                         isOpen={isChatOpen}
                         onClose={() => setIsChatOpen(false)}
@@ -76,6 +111,14 @@ const AcessCourse: React.FC = () => {
                         fullname={courseDetail?.tutorName}
                         profile={courseDetail?.tutorId?.profileImage}
                     />
+                    {isChatHistoryOpen && (
+                        <ListCallHistory 
+                           onClose={() => setIsChatHistoryOpen(false)}
+                           callHistory = {history}
+                           fullname={courseDetail?.tutorName}
+                           profile={courseDetail?.tutorId?.profileImage}
+                        />    
+                    )}
                 </div>
                 <div className='flex items-start mt-4 space-x-8'>
                     <div>

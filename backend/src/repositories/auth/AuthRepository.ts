@@ -45,20 +45,44 @@ export class AuthRepository extends BaseRepository<IUser | ITutor> implements IA
         return null;
     }
 
-    async findByUsers(filter: UserFilterQuery = {}): Promise<IUser[]> {
-        let query: FilterQuery<ITutor & Document> = {};
-        if(filter?.searchTerm?.trim()){
-            const searchTerm = filter.searchTerm.trim()
+    async findByUsers(
+        filter: UserFilterQuery = {}, 
+        page?: number, 
+        limit?: number
+    ): Promise<{ users: IUser[]; totalUsers: number }> {
 
+        const pageNum = Number(page) || 1;
+        const limitNum = Number(limit) || 8;
+    
+        const skipValue = (pageNum - 1) * limitNum;
+        
+        let query: FilterQuery<IUser & Document> = {};
+        if (filter?.searchTerm?.trim()) {
+            const searchTerm = filter.searchTerm.trim();
+    
             query.$or = [
-                {fullname: {$regex: new RegExp(searchTerm, 'i')}},
-                {username: {$regex: new RegExp(searchTerm, 'i')}}
+                { fullname: { $regex: new RegExp(searchTerm, 'i') } },
+                { username: { $regex: new RegExp(searchTerm, 'i') } }
             ];
         }
-        return this.userModel.find(query).sort({ createdAt: -1 }).exec();
+    
+        const [users, totalUsers] = await Promise.all([
+            this.userModel
+                .find(query)
+                .sort({ createdAt: -1 })
+                .skip(skipValue)
+                .limit(limitNum)
+                .exec(),
+            this.userModel.countDocuments(query)
+        ]);
+    
+        return { 
+            users, 
+            totalUsers 
+        };
     }
 
-    async findByTutors(filter: TutorFilterQuery = {}): Promise<ITutor[]> {
+    async findByTutors(filter: TutorFilterQuery = {},): Promise<ITutor[]> {
         let query: FilterQuery<ITutor & Document> = {};
         if(filter?.searchTerm?.trim()){
             const searchTerm = filter.searchTerm.trim()

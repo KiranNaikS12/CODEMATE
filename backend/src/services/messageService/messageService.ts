@@ -25,7 +25,7 @@ export class MessageService implements IMessageService {
         @inject('CallHistoryRepository') private CallHistoryRepository: ICallHistoryRepository
     ) { }
 
-    async resolveUserOrTutor(id: string): Promise<{ type: 'User' | 'Tutor'; data: IUser | ITutor }> {
+    async resolveUserOrTutor(id: string): Promise<{ type: 'User' | 'Tutor'; data: IUser | ITutor } | null> {
 
         const user = await this.UserRepository.findById(id);
         if (user) return { type: 'User', data: user };
@@ -33,12 +33,16 @@ export class MessageService implements IMessageService {
         const tutor = await this.TutorRepository.findById(id);
         if (tutor) return { type: 'Tutor', data: tutor }
 
-        throw new CustomError(AuthMessages.USERS_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        return null;
     }
 
     async prepareMessage(receiverId: string, senderId: string, text: string | undefined, images: string[], clientId?: string): Promise<Partial<IMessage>> {
         const sender = await this.resolveUserOrTutor(senderId);
         const receiver = await this.resolveUserOrTutor(receiverId);
+
+        if (!sender || !receiver) {
+            throw new CustomError(AuthMessages.USERS_NOT_FOUND, HttpStatusCode.NOT_FOUND);
+        }
 
         const uniqueId = randomStrings(10)
 
@@ -81,18 +85,22 @@ export class MessageService implements IMessageService {
         const filter = { senderId: receiverId, receiverId: senderId, read: false };
         const update = { $set: { read: true } }
 
-        const IsRead = await this.MessageRepository.updateMany(filter, update);
+        await this.MessageRepository.updateMany(filter, update);
     }
 
     async prepareCallHistory(receiverId: string, senderId: string, callStatus: CallStatus,): Promise<Partial<ICallHistory>> {
         const sender = await this.resolveUserOrTutor(senderId);
         const receiver = await this.resolveUserOrTutor(receiverId);
 
+        if (!sender || !receiver) {
+            throw new CustomError(AuthMessages.USERS_NOT_FOUND, HttpStatusCode.NOT_FOUND);
+        }
+
         return {
             senderId,
             senderType: sender.type,
             receiverId,
-            receiverType: receiver.type,
+            receiverType: receiver.type,    
             callStatus,
             timestamp: new Date().toISOString(),
         };
@@ -100,7 +108,7 @@ export class MessageService implements IMessageService {
 
     async createCallHistory(callData: Partial<ICallHistory>): Promise<ICallHistory> {
         try {
-            return await this.CallHistoryRepository.create(callData);
+        return await this.CallHistoryRepository.create(callData);
         } catch (error) {
             console.log(error)
             throw new CustomError(AuthMessages.FAILED_TO_SAVE_CALL_HISTORY, HttpStatusCode.INTERNAL_SERVER_ERROR)
@@ -119,18 +127,29 @@ export class MessageService implements IMessageService {
         return existingCallHistory.save()
     }
 
-    async getCallHistory(senderId: string, receiverId: string): Promise<ICallHistory[]> {
-        await this.resolveUserOrTutor(senderId);
-        await this.resolveUserOrTutor(receiverId);
-
-        const message = await this.CallHistoryRepository.find({
-            $or: [
-                { senderId, receiverId },
-                { senderId: receiverId, receiverId: senderId }
-            ]
-        })
-
-        return message.sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    async getCallHistory(senderId: string, receiverId?: string): Promise<ICallHistory[]> {
+        try {
+            const query = receiverId
+                ? {
+                    $or: [
+                        { senderId, receiverId },
+                        { senderId: receiverId, receiverId: senderId }
+                    ]
+                }
+                : {
+                    $or: [
+                        { senderId },
+                        { receiverId: senderId }
+                    ]
+                };
+    
+            const callHistory = await this.CallHistoryRepository.find(query);
+            return callHistory.sort((a, b) =>
+                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+        } catch (error) {
+            throw new CustomError(AuthMessages.FAILED_TO_FETCH_CALL_HISTORY, HttpStatusCode.INTERNAL_SERVER_ERROR)
+        }
     }
 
 }
