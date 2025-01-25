@@ -44,6 +44,8 @@ export interface ApiResponse<T>  {
 }
 
 
+
+
 export interface ProfileImageProps {
     handleProfile: () => void;
     userId: string;
@@ -102,4 +104,4 @@ export interface ErrorData {
       success: boolean;
       errorCode: string | null;
     };
-  }
+}

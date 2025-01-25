@@ -37,12 +37,6 @@ const AuthRoute: React.FC<AuthRouteProps> = ({ children, role }) => {
           return;
         }
 
-        if(role === 'user' || role === 'tutor') {
-          if(!socketService.isConnected()) {
-            socketService.connect();
-          }
-        }
-
       } catch (error) {
         console.log("Token verification failed: ", error);
       }

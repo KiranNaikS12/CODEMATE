@@ -51,7 +51,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, receiver
   useEffect(() => {
     const setupSocketConnection = async () => {
       try {
-        await socketService.connect();
+        await socketService.connect(senderId!._id);
         // Join room when receiverId is available
         if (receiverId) {
           // console.log("receiverId", receiverId)
@@ -79,8 +79,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, receiver
               return [...prev, ...newMessages];
             });
           });
-
-          setIsReceiverActive(true)
         }
 
 
@@ -112,7 +110,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, receiver
           if (userId === receiverId) {
             setIsReceiverActive(status === 'Online')
           }
-        }
+        };
 
         socketService.onUserStatusChange(handleUserStatus);
 
@@ -122,11 +120,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, receiver
         };
 
         socketService.listenForCalls(handleIncomingCall);
-
-        
-        
-        
-
       } catch (error) {
         console.error("Socket setup failed:", error);
       }

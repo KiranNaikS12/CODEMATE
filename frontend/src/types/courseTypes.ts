@@ -106,4 +106,6 @@ export type showCourseViewResponse = ApiResponse<AccessCourseTypes>
 
 export interface FilterData {
     searchTerm?: string;
+    page?: string;
+    limit?: string;
 }

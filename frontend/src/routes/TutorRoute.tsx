@@ -12,6 +12,7 @@ import AddCourseForm from "../components/TutorContent/AddCourseForm"
 import EnrolledStudents from "../components/TutorContent/EnrolledStudents"
 import NotFound from "../pages/CommonPages/NotFound"
 import LandingPage from "../pages/LandingPage/LandingPage"
+import ChatInterface from "../pages/Tutor/ChatInterface"
 
 
 
@@ -34,7 +35,7 @@ const TutorRoute = () => {
            <Route path="student" element={<EnrolledStudents/>}/>
         </Route>
         <Route path="/profile/:id" element ={<AuthRoute role="tutor"><TutorProfile/></AuthRoute>}></Route>
-
+        <Route path="/chat/:id" element={<AuthRoute role="tutor"><ChatInterface/></AuthRoute>}></Route>
         <Route path="*" element = {<NotFound/>}></Route>
     </Routes>
   )

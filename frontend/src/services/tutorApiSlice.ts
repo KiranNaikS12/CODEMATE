@@ -114,7 +114,7 @@ export const tutorApiSlice = createApi({
             body:{isBlocked}
         })
        }),
-       getEnrolledUser: builder.query<showEnrolledUsersResponse, {tutorId: string, page: number, limit: number}>({
+       getEnrolledUser: builder.query<showEnrolledUsersResponse, {tutorId: string, page?: number, limit?: number}>({
         query:({tutorId, page, limit}) => ({
             url:`/tutors/get-students/${tutorId}`,
             method:'GET',

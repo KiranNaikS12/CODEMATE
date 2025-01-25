@@ -26,13 +26,14 @@ export const adminApiSlice = createApi({
                 method: 'POST'
             })
         }),
-        listUsers: builder.query<ListUsersResponse, FilterData>({
-            query:({searchTerm}) => {
+        listUsers: builder.query<ListUsersResponse, { searchTerm: string, page: number, limit: number}>({
+            query:({searchTerm, page = 1, limit = 8}) => {
                 let queryString = '';
                 if(searchTerm) queryString += `searchTerm=${searchTerm.toLowerCase()}&`;
+                queryString += `page=${page}&limit=${limit}`;
                 return {
                     url:`/admin/listuser?${queryString}`,
-                    method:'GET'
+                    method:'GET',
                 }
             },
         }),

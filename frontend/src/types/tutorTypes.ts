@@ -17,6 +17,11 @@ export interface Tutor {
    profileImage?: string
 }
 
+export interface ListTutors {
+   tutors: Tutor[],
+   totalTutors: number;
+}
+
 export type ListTutorResponse = ApiResponse<Tutor[]>
 
 

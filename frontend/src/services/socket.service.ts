@@ -1,12 +1,13 @@
 //frontend socket.service
 import { io, Socket } from "socket.io-client";
 import { Message } from "../types/messageTypes";
+import { ICallHistory } from "../types/callHistoryTypes";
 
 class SocketService {
   public socket: Socket | null = null;
   private isConnecting = false;
 
-  connect(): Promise<void> {
+  connect(userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
 
       this.disconnect();
@@ -24,7 +25,10 @@ class SocketService {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
-        timeout: 5000
+        timeout: 5000,
+        query: {
+          userId: userId
+        }
       });
 
       this.socket.on("connect", () => {
@@ -60,8 +64,6 @@ class SocketService {
   getSocket() {
     return this.socket;
   }
-
-
 
   //sending message:
   sendMessage(data: Message) {
@@ -114,12 +116,30 @@ class SocketService {
     });
   }
 
+  //load call history
+  loadCallHistory(callback: (data: ICallHistory[]) => void): void {
+    this.socket?.off("load_call_history");
+    this.socket?.on("load_call_history", (rawMessages: string | ICallHistory[]) => {
+      try {
+        const parsedData: ICallHistory[] = typeof rawMessages === "string" ? JSON.parse(rawMessages) : rawMessages;
+        callback(parsedData)
+      } catch (error) {
+        console.log('Error to parse call history', error)
+      }
+    });
+  }
+
+  unloadCallHistory(): void {
+    if (this.socket) {
+      this.socket?.off("load_call_history");
+    }
+  }
+
   joinRoom(senderId: string, receiverId: string) {
     if (this.isConnected()) {
       [senderId, receiverId].sort().join("_");
       this.socket?.emit('join_room', { senderId, receiverId });
 
-      this.emitUserStatus(senderId, 'Online')
     }
   }
 
@@ -171,13 +191,8 @@ class SocketService {
     }
   }
 
-  emitUserStatus(userId: string, status: 'Online' | 'Offline') {
-    if (this.socket) {
-      this.socket.emit('user_status_change', { userId, status })
-    }
-  }
 
-  onUserStatusChange(callback: (data: { userId: string, status: 'Online' | 'Offline' }) => void) {
+  onUserStatusChange(callback: (data: { userId: string, status: 'Online' | 'Offline', senderId?: string }) => void) {
     this.socket?.on('user_status', callback);
   }
 
@@ -206,7 +221,7 @@ class SocketService {
     this.socket.on("incoming_call", (data) => {
       // console.log("Raw incoming call data received:", data);
       callback(data);
-  });
+    });
   }
 
   cleanupCallListeners(): void {
@@ -215,8 +230,8 @@ class SocketService {
     }
   }
 
-  videoCallAccepted(senderId: string, receiverId:string) {
-    if(this.isConnected()) {
+  videoCallAccepted(senderId: string, receiverId: string) {
+    if (this.isConnected()) {
       const room = [senderId, receiverId].sort().join("_");
       this.socket?.emit("video-call-accept", {
         senderId,
@@ -228,8 +243,8 @@ class SocketService {
     }
   }
 
-  listenForAcceptCall(callback: (data: {senderId: string, receiverId:string}) => void): void {
-    if(!this.socket) return;
+  listenForAcceptCall(callback: (data: { senderId: string, receiverId: string }) => void): void {
+    if (!this.socket) return;
     this.socket?.off("call_accepted");
     this.socket?.on("call_accepted", (data) => {
       console.log("Raw incoming call data received for video call acceptance:", data);
@@ -238,13 +253,13 @@ class SocketService {
   }
 
   cleanUpListenForAcceptCall(): void {
-    if(this.socket) {
+    if (this.socket) {
       this.socket?.off("call_accepted")
     }
   }
 
   videoCallIgonred(senderId: string, receiverId: string) {
-    if(this.isConnected()) {
+    if (this.isConnected()) {
       const room = [senderId, receiverId].sort().join("_");
       this.socket?.emit("video-call-reject", {
         senderId,
@@ -256,8 +271,8 @@ class SocketService {
     }
   }
 
-  listenForIgnoredEvent(callback: (data: {senderId: string, receiverId:string}) => void) : void {
-    if(!this.socket) return;
+  listenForIgnoredEvent(callback: (data: { senderId: string, receiverId: string }) => void): void {
+    if (!this.socket) return;
     this.socket?.off("call_rejected");
     this.socket?.on("call_rejected", (data) => {
       callback(data);
@@ -265,14 +280,14 @@ class SocketService {
   }
 
   cleanUpListenForRejectedCall(): void {
-    if(this.socket) {
+    if (this.socket) {
       this.socket?.off("call_rejected")
     }
   }
 
   sendWebRTCOffer(senderId: string, receiverId: string, offer: RTCLocalSessionDescriptionInit) {
     console.log('Sending WebRTC offer to:', receiverId);
-    if(this.isConnected()){
+    if (this.isConnected()) {
       const room = [senderId, receiverId].sort().join("_");
       this.socket?.emit("webrtc-offer", {
         senderId,
@@ -312,7 +327,7 @@ class SocketService {
 
   //*********Events for handling End Call************
   endVideoCall(senderId: string, receiverId: string) {
-    if (this.isConnected()){
+    if (this.isConnected()) {
       const room = [senderId, receiverId].sort().join("_");
       this.socket?.emit("video-call-end", {
         senderId,
@@ -322,8 +337,8 @@ class SocketService {
     }
   }
 
-  listenForCallEnd(callback: (data: {senderId: string, receiverId: string}) => void) : void {
-    if(!this.socket) return;
+  listenForCallEnd(callback: (data: { senderId: string, receiverId: string }) => void): void {
+    if (!this.socket) return;
     this.socket?.off("call_ended");
     this.socket?.on("call_ended", (data) => {
       callback(data);
@@ -335,7 +350,7 @@ class SocketService {
       this.socket?.off("call_ended");
     }
   }
-  
+
 
 }
 

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { MessageCircle } from 'lucide-react';
-import TutorChatInterface from './TutorChatInterface';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { useGetEnrolledUserQuery } from '../../services/tutorApiSlice';
+import { Link } from 'react-router-dom';
 
 const EnrolledStudents: React.FC = () => {
-    const [isChatOpen, setIsChatOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(8);
     const [totalStudents, setTotalStudents] = useState(0);
@@ -20,9 +18,6 @@ const EnrolledStudents: React.FC = () => {
 
     const studentData = studentDetails?.data
 
-    const toggleChat = () => {
-        setIsChatOpen(!isChatOpen)
-    }
 
     useEffect(() => {
         if (studentDetails) {
@@ -35,6 +30,7 @@ const EnrolledStudents: React.FC = () => {
     };
 
     return (
+        <>
         <div className="relative flex-1 p-6 pl-2 overflow-auto">
             <div className='mt-2'>
                 <div className="flex justify-between mt-2">
@@ -83,16 +79,9 @@ const EnrolledStudents: React.FC = () => {
                                     <div className="text-sm text-gray-500">{user.country}</div>
 
                                 </td>
-                                <td>
-                                    <button
-                                        onClick={toggleChat}
-                                        className="flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg bg-hoverColor hover:bg-blue-600"
-                                    >
-                                        <MessageCircle className="w-4 h-4" />
-                                        <span>Chat</span>
-                                    </button>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-blue-600 text-md">view</div>
                                 </td>
-                                <TutorChatInterface isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} data={user} />
                             </tr>
                         ))}
                     </tbody>
@@ -114,7 +103,7 @@ const EnrolledStudents: React.FC = () => {
                         ))}
                     </select>
                 </div>
-                <div className="flex items-center justify-center gap-x-2">
+                <div className="z-10 flex items-center justify-center gap-x-2">
                     {/* previous */}
                     <button
                         disabled={currentPage === 1}
@@ -155,6 +144,18 @@ const EnrolledStudents: React.FC = () => {
                 </div>
             </div>
         </div>
+        <div className="flex flex-col min-h-screen p-2">
+        <Link to={`/tutor/chat/${id}`}>
+          <div>
+            <button
+              className="fixed flex items-center px-2 py-2 mb-6 mr-6 text-base border rounded-lg shadow-lg border-hoverColor text-customGrey bottom-3 right-6 hover:bg-customGrey hover:text-themeColor gap-x-2 bg-themeColor"
+            >
+              Open Chat
+            </button>
+          </div>
+        </Link>
+      </div>
+        </>
     )
 }
 

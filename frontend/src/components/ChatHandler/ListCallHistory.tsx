@@ -1,6 +1,7 @@
 import React from 'react'
 import { ICallHistory } from '../../types/callHistoryTypes';
 import useDateFormatter from '../../hooks/useFormatDate';
+import {  getCallStatusForUser, getStatusColor } from '../../utils/getCallStatus';
 
 export interface ListCallHistoryProps {
     onClose: () => void;
@@ -8,26 +9,6 @@ export interface ListCallHistoryProps {
     fullname: string | undefined;
     profile: string | undefined;
 }
-
-const getStatusColor = (status: string, senderType: string) => {
-    switch(status) {
-        case 'accepted':
-            return senderType === 'User' ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800';
-        case 'rejected': return 'bg-red-200 text-red-800';
-        case 'sent': return 'bg-red-100 text-gray-800';
-        default: return 'bg-gray-200 text-gray-800';
-    }
-};
-
-const getStatusText = (status: string, senderType: string) => {
-    switch(status) {
-        case 'accepted':
-            return senderType === 'User' ? 'Outgoing' : 'Incoming';
-        case 'rejected': return 'Declined';
-        case 'sent': return 'Missed';
-        default: return status;
-    }
-};
 
 const ListCallHistory: React.FC<ListCallHistoryProps> = ({ onClose, callHistory, fullname, profile }) => {
     const { formatToISODate } = useDateFormatter();
@@ -60,7 +41,7 @@ const ListCallHistory: React.FC<ListCallHistoryProps> = ({ onClose, callHistory,
                                     <div className='flex flex-col items-start space-y-1'>
                                         <h1 className='text-gray-600'>{fullname}</h1>
                                         <span className={`px-2 py-1 rounded text-xs ${getStatusColor(call.callStatus, call.senderType)}`}>
-                                            {getStatusText(call.callStatus, call.senderType)}
+                                            {getCallStatusForUser(call.callStatus, call.senderType)}
                                         </span>
                                     </div>
                                 </div>
