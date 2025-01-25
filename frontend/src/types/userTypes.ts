@@ -9,8 +9,15 @@ export interface User {
     isBlocked: boolean
 }
 
+export interface ListUser {
+    users: User[];
+    totalUsers: number
+}
 
-export type ListUsersResponse = ApiResponse<User[]>
+
+export type ListUsersResponse = ApiResponse<ListUser>
+
+
 
 export interface TotalSubmission {
     count: number;
