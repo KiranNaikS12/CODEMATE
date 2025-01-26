@@ -1,8 +1,25 @@
 import mongoose, { Schema} from 'mongoose';
 import bcrypt from 'bcryptjs';
 import {Role} from '../types/commonTypes'
-import { IUser } from '../types/userTypes';
+import { IUser, CourseProgress } from '../types/userTypes';
 
+const courseProgressSchema = new Schema<CourseProgress>({
+    courseId: {
+        type: String,
+        ref: 'Course',
+        required: true
+    },
+    percentage: {type: Number, required: true, default: 0},
+    chapters: [{
+        chapterId: {type: String, required: true},
+        chapterProgress: {type: Number, required: true, default: 0},
+        videos: [{
+            videoId: {type:String, required: true},
+            completed: {type: Boolean, required: true, default: false},
+            lastWatchedAt: {type: Date, default: Date.now}
+        }]
+    }]
+})
 
 const userSchema = new Schema<IUser>({
     username:{
@@ -128,6 +145,7 @@ const userSchema = new Schema<IUser>({
             }
         }]
     },
+    courseProgress: [courseProgressSchema]
 
 },{
     timestamps:true

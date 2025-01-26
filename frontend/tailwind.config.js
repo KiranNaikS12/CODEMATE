@@ -17,6 +17,9 @@ module.exports = {
       },
       fontFamily: {
         'rubik-wet-paint': ['"Rubik Wet Paint"', 'system-ui'],
+        'nabla': ['"Nabla"', 'serif'],
+        'pirata': ['"Pirata One"', 'serif'],
+        'playwrite': ['Playwrite IN', 'serif']
       },
       boxShadow: {
         'left': '-4px 0px 10px rgba(0, 0, 0, 0.2)',

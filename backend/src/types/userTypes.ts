@@ -3,6 +3,22 @@ import { FilterQuery } from "mongoose";
 import { BaseUser } from "./commonTypes";
 import { ITutor } from "./tutorTypes";
 
+
+export interface CourseProgress {
+    courseId: string;
+    percentage: number; 
+    chapters: Array<{
+        chapterId: string;
+        chapterProgress: number;
+        videos: Array<{
+            videoId: string;
+            completed: boolean;
+            lastWatchedAt: Date;
+        }>;
+    }>;
+}
+
+
 export interface IUser extends BaseUser {
     fullname: string;
     country:string,
@@ -40,7 +56,15 @@ export interface IUser extends BaseUser {
             difficulty: 'easy' | 'medium' | 'hard';
         }>;
     };
-    
+    courseProgress?: CourseProgress[]
+}
+
+export interface RequestedCourseProgressData {
+    userId: string;
+    courseId: string;
+    chapterId: string;
+    videoId: string;
+    completed: boolean;
 }
 
 //typeGuard 

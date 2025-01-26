@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Header from '../../components/Headers/Header'
-import { useViewCourseDataQuery } from '../../services/userApiSlice';
+import { useTrackVideoProgressMutation, useViewCourseDataQuery } from '../../services/userApiSlice';
 import { useParams } from 'react-router-dom';
 import CourseViewSidebar from '../../components/UserContent/CourseViewSidbar';
 import { File, Globe, UserCircle, Video, Play, MessageCircle, PhoneCall } from 'lucide-react';
@@ -12,6 +12,8 @@ import socketService from '../../services/socket.service';
 import { ICallHistory } from '../../types/callHistoryTypes';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
+import Swal from 'sweetalert2';
+import Certificate from '../../components/Modals/Certificate';
 
 
 const AcessCourse: React.FC = () => {
@@ -21,20 +23,26 @@ const AcessCourse: React.FC = () => {
     const courseDetail = courseResponse?.data;
     const receiverId = courseDetail?.tutorId._id;
     const [currentVideoUrl, setCurrentVideoUrl] = useState<string>('');
-    const [isChatOpen, setIsChatOpen] = useState(false);                         
+    const [isChatOpen, setIsChatOpen] = useState(false);
     const [isChatHistoryOpen, setIsChatHistoryOpen] = useState<boolean>(false);
     const [history, setHistory] = useState<ICallHistory[]>([]);
-
     const userId = userInfo?._id;
+    const [trackVideoProgress] = useTrackVideoProgressMutation();
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [currentVideoProgress, setCurrentVideoProgress] = useState({
+        videoId: '',
+        percentage: 0
+    });
+    const [certificateViewed, setCertificateViewed] = useState<boolean>(false)
 
     useEffect(() => {
         if (courseDetail?.chapters?.[0]?.videos?.[0]?.video) {
             setCurrentVideoUrl(courseDetail.chapters[0].videos[0].video);
         }
 
-        if(receiverId) {
+        if (receiverId) {
             const currentUserId = userId;
-            if(currentUserId){
+            if (currentUserId) {
                 socketService.loadCallHistory((callHistories) => {
                     setHistory(callHistories)
                 })
@@ -47,7 +55,57 @@ const AcessCourse: React.FC = () => {
 
     }, [courseDetail, receiverId, userId]);
 
-    
+    useEffect(() => {
+        if (courseDetail?.userProgress?.percentage === 100) {
+            Swal.fire({
+                title: 'Congratulations! ',
+                text: 'You have successfully completed the course.',
+                toast: true,
+                position: 'top',
+                background: '#AFE1AF',
+                color: '#00000',
+                confirmButtonText: 'Great!',
+                customClass: {
+                    popup: 'rounded-lg shadow-lg  border border-green-500'
+                },
+            });
+        }
+    }, [courseDetail?.userProgress]);
+
+
+    const handleVideoProgress = async () => {
+        const video = videoRef.current;
+        if (!video || !courseDetail) return;
+
+        const currentVideo = courseDetail?.chapters
+            .flatMap(chapter => chapter?.videos)
+            .find(videoObj => videoObj?.video === currentVideoUrl)
+
+        if (!currentVideo) return;
+
+        const percentage = (video.currentTime / video.duration) * 100;
+
+        if (Math.abs(percentage - currentVideoProgress.percentage) >= 10) {
+            setCurrentVideoProgress({
+                videoId: currentVideo._id,
+                percentage
+            });
+
+            if (percentage >= 89.5) {
+                await trackVideoProgress({
+                    userId: userId!,
+                    courseId: id!,
+                    chapterId: courseDetail?.chapters.find(chapter =>
+                        chapter.videos.some(v => v._id === currentVideo._id)
+                    )?._id || '',
+                    videoId: currentVideo._id,
+                    completed: true,
+                })
+            }
+        }
+    };
+
+
 
     // Flatten all videos and exclude the first video
     const upNextVideos = courseDetail?.chapters
@@ -71,6 +129,10 @@ const AcessCourse: React.FC = () => {
         return (
             <UserNotFound errorData={error as ErrorData} />
         )
+    }
+
+    const handleCertificateView = () => {
+        setCertificateViewed(!certificateViewed)
     }
 
     return (
@@ -112,21 +174,23 @@ const AcessCourse: React.FC = () => {
                         profile={courseDetail?.tutorId?.profileImage}
                     />
                     {isChatHistoryOpen && (
-                        <ListCallHistory 
-                           onClose={() => setIsChatHistoryOpen(false)}
-                           callHistory = {history}
-                           fullname={courseDetail?.tutorName}
-                           profile={courseDetail?.tutorId?.profileImage}
-                        />    
+                        <ListCallHistory
+                            onClose={() => setIsChatHistoryOpen(false)}
+                            callHistory={history}
+                            fullname={courseDetail?.tutorName}
+                            profile={courseDetail?.tutorId?.profileImage}
+                        />
                     )}
                 </div>
                 <div className='flex items-start mt-4 space-x-8'>
                     <div>
                         {/* VIDEO TAG */}
                         <video
+                            ref={videoRef}
                             key={currentVideoUrl}
                             width="800" height="360" controls
                             className='rounded-lg'
+                            onTimeUpdate={handleVideoProgress}
                         >
                             {currentVideoUrl ? (
                                 <source src={currentVideoUrl} type="video/mp4" />
@@ -137,7 +201,7 @@ const AcessCourse: React.FC = () => {
                     </div>
 
 
-                    <div className='flex flex-col p-2 px-4 bg-white'>
+                    <div className='flex flex-col p-2 px-4 bg-gray-200'>
                         <div className='flex justify-start'>
                             <h1 className='text-xl font-medium text-gray-600'>About Course</h1>
                         </div>
@@ -158,6 +222,32 @@ const AcessCourse: React.FC = () => {
                             <div className='flex items-center mt-4 space-x-1 text-gray-600'>
                                 <Video size={20} />
                                 <h1>Total Videos: <span className='text-themeColor'>{courseDetail?.chapters.reduce((total, chapter) => total + chapter.videos.length, 0) || 0}</span></h1>
+                            </div>
+                            <div className='flex flex-col justify-start mt-2'>
+                                {courseDetail?.userProgress?.percentage === 100 && (
+                                    <div className='flex flex-col justify-start mt-6'>
+                                        <div className="p-4 pl-0 text-green-800 rounded-lg text-md dark:text-green-400" role="alert">
+                                            <span className="font-medium"> Congratulations! </span>Now you can download your course certificate.
+                                        </div>
+                                        <div>
+                                            <p
+                                                className='text-sm text-blue-700 underline cursor-pointer'
+                                                onClick={handleCertificateView}
+                                            >
+                                                Click Here To Download
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                {certificateViewed && (
+                                    <Certificate
+                                        userName={courseDetail?.userName || ''}
+                                        mentorName={courseDetail?.tutorName || 'Instructor'}
+                                        courseName={courseDetail?.title || 'Course'}
+                                        issueDate={new Date().toLocaleDateString()}
+                                        onClose={() => setCertificateViewed(false)}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>

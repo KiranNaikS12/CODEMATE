@@ -140,5 +140,8 @@ export const AuthMessages = {
     ORDER_CONFLICT: 'Course already purchased',
     FAILED_TO_SAVE_CALL_HISTORY: 'Failed to save call history',
     FAILED_TO_UPDATE_CALL_HISTORY: 'Failed to updated call history',
-    FAILED_TO_FETCH_CALL_HISTORY:'Failed to fetch call history'
+    FAILED_TO_FETCH_CALL_HISTORY:'Failed to fetch call history',
+    CHAPTER_NOT_FOUND:'Chapter does not exists in a course',
+    VIDEO_NOT_FOUND:'Video does not exists in a course',
+    COURSE_PROGRESS_UPDATED: 'Course progress updated successfully'
 };      

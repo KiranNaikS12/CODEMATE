@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { showUserDetailsResponse } from "../types/userTypes";
 import { FilteredData, ListProblemResponse, showProblemDataResponse } from "../types/problemTypes";
-import { showCourseDetailsResponse, showCourseViewResponse } from "../types/courseTypes";
+import { showCourseDetailsResponse, showCourseViewResponse, VideoProgressPayload } from "../types/courseTypes";
 import { ListTutorResponse, showTutorDetailResponse } from "../types/tutorTypes";
 import { showCartDetailsResponse } from "../types/cartTypes";
 import { showWishlistDetailsResponse } from "../types/wishlistTypes";
@@ -255,7 +255,8 @@ export const apiSlice = createApi({
       viewCourseData: builder.query<showCourseViewResponse, string>({
         query: (courseId) => ({
           url:`/users/view-course/${courseId}`,
-          method: 'GET'
+          method: 'GET',
+          
         }),
         providesTags: ['Course']
 
@@ -355,6 +356,13 @@ export const apiSlice = createApi({
           url:`/users/tutor/${tutorId}`,
           method: 'GET'
         }),
+      }),
+      trackVideoProgress: builder.mutation<void, VideoProgressPayload>({
+        query: (progressData) => ({
+          url:'/users/course/progress',
+          method:'PUT',
+          body: progressData,
+        })
       })
     }),
 
@@ -407,7 +415,8 @@ export const {
     useGetUserProgressDataQuery,
     useGetProblemCountQuery,
     useGetDashboardStatsQuery,
-    useViewTutorDataQuery
+    useViewTutorDataQuery,
+    useTrackVideoProgressMutation
 
 } = apiSlice;
 

@@ -95,13 +95,14 @@ export class CourseController {
     async viewCourseDetails(req:Request, res:Response) : Promise<void> {
         try {
             const { id } = req.params;
-            const courseData = await this.CourseService.viewCourseDetails(id);
+            const userId = req.user?.userId;
+            const courseData = await this.CourseService.viewCourseDetails(id, userId!);
             res.status(HttpStatusCode.Ok).json(formatResponse(courseData, AuthMessages.COURSE_LISTED_SUCCESSFULLY))
         }  catch (error) {
             console.log('error', error)
             handleErrorResponse(res, error, HttpStatusCode.INTERNAL_SERVER_ERROR)
         }
-    }
+    } 
 
     async listEnrolledCourses(req:Request, res:Response) : Promise<void> {
         try {
@@ -109,7 +110,16 @@ export class CourseController {
             const courseData = await this.CourseService.listEnrolledCourses(id);
             res.status(HttpStatusCode.Ok).json(formatResponse(courseData, AuthMessages.COURSE_LISTED_SUCCESSFULLY))
         } catch (error) {
-            console.log('Error', error);
+            handleErrorResponse(res, error, HttpStatusCode.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateUserCourseProgress(req:Request, res: Response) : Promise<void> {
+        try {
+            await this.CourseService.updateUserCouseProgress(req.body)
+            res.status(HttpStatusCode.CREATED).json(formatResponse(null, AuthMessages.COURSE_PROGRESS_UPDATED))
+        } catch (error){
+            console.log("error", error)
             handleErrorResponse(res, error, HttpStatusCode.INTERNAL_SERVER_ERROR)
         }
     }

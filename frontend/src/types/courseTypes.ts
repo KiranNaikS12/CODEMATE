@@ -1,5 +1,6 @@
 import { TutorAdditonal } from "./tutorTypes";
 import { ApiResponse } from "./types";
+import { CourseProgress } from "./userTypes";
 
 //courseFormTypes
 export type Videos = {
@@ -9,6 +10,7 @@ export type Videos = {
 }
 
 export type VideoUrl = {
+    _id: string
     chapterTitle:string,
     videos: Videos[]
 }
@@ -26,6 +28,8 @@ export type CourseFormTypes = {
     discount:number,
     coverImage:string
 }
+
+
 
 export type CourseTypes = {
     _id:string;
@@ -45,6 +49,8 @@ export type CourseTypes = {
     reviewCount: number,
     discount:number,
     isBlocked:boolean;
+    courseProgress?: CourseProgress
+    
 }
 
 
@@ -80,11 +86,13 @@ export type AccessCourseTypes = {
     reviewCount: number,
     discount:number,
     isBlocked:boolean;
+    userProgress?: CourseProgress,
+    userName?: string; 
 }
 
 export type listMyCourse = {
     courses: CourseTypes[];
-    total: number
+    total: number;
 }
 
 export interface VideoUploadSectionProps {
@@ -109,3 +117,13 @@ export interface FilterData {
     page?: string;
     limit?: string;
 }
+
+//VIDEO_PROGRESS_PAYLOAD
+export interface VideoProgressPayload {
+    userId: string;
+    courseId: string;
+    chapterId: string;
+    videoId: string;
+    completed: boolean;
+}
+  

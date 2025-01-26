@@ -31,6 +31,20 @@ export interface TotalSubmission {
     }>;
 }
 
+export interface CourseProgress {
+    courseId: string;
+    percentage: number; 
+    chapters: Array<{
+        chapterId: string;
+        chapterProgress: number;
+        videos: Array<{
+            videoId: string;
+            completed: boolean;
+            lastWatchedAt: Date;
+        }>;
+    }>;
+}
+
 export interface UserAdditional extends User {
     fullname: string,
     country: string,
@@ -56,7 +70,8 @@ export interface UserAdditional extends User {
         totalPercentage: number;
         solvedProblemIds: string[];
     };
-    totalSubmission?: TotalSubmission
+    totalSubmission?: TotalSubmission,
+    courseProgress?: CourseProgress[]
 }
 
 export interface EnrolledStudents {
