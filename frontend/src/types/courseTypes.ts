@@ -10,7 +10,7 @@ export type Videos = {
 }
 
 export type VideoUrl = {
-    _id: string
+    _id?: string
     chapterTitle:string,
     videos: Videos[]
 }

@@ -7,6 +7,10 @@ class SocketService {
   public socket: Socket | null = null;
   private isConnecting = false;
 
+  get connecting(): boolean {
+    return this.isConnecting;
+  }
+
   connect(userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
 
