@@ -13,4 +13,5 @@ export interface IMessageService {
     createCallHistory(callData: Partial<ICallHistory>) : Promise<ICallHistory>
     updateCallHistory(senderId: string, receiverId: string, callStatus: CallStatus) :  Promise<ICallHistory | null>;
     getCallHistory(senderId: string, receiverId?: string): Promise<ICallHistory[]>
+    MarkMessageNotification(senderId: string, receiverId: string): Promise<void>
 }

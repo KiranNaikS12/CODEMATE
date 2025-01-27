@@ -15,17 +15,23 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store.ts";
 import { Link } from "react-router-dom";
+import { useClearAllNotificationMutation, useGetNotificationQuery } from "../../services/userApiSlice.ts";
+import NotificationItem from "../NotificationTab/NotificationItem.tsx";
+import { APIError } from "../../types/types.ts";
+import { toast } from "sonner";
 
 
-const Header:React.FC = () => {
+const Header: React.FC = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMessageDropdown, setIsMessageDropdown] = useState<boolean>(false);
 
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   const userId = userInfo?._id;
+  const { data: notificationResponse } = useGetNotificationQuery({ id: userId! });
+  const notification = notificationResponse?.data;
+  const [clearAll] = useClearAllNotificationMutation();
 
-  
-  
   const toggleSideBar = () => {
     setIsSideBarOpen(!isSideBarOpen);
   };
@@ -33,6 +39,19 @@ const Header:React.FC = () => {
   const toggleDropDown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const messageDropdown = () => {
+    setIsMessageDropdown(!isMessageDropdown)
+  }
+
+  const removeAllNotification = async (userId: string) => {
+    try {
+      await clearAll({ userId }).unwrap();
+    } catch (error) {
+      const apiError = error as APIError;
+      toast.error(apiError.data?.message);
+    }
+  }
 
   return (
     <>
@@ -89,10 +108,44 @@ const Header:React.FC = () => {
 
         {/* User controls section */}
         <div className="flex items-center p-4 space-x-8 bg-white rounded-lg md:space-x-11 text-themeColor lg:shadow-md sm:space-x-4">
-          <FontAwesomeIcon
-            icon={faBell}
-            className="text-lg md:text-xl cursor-pointer hover:text-[#247cff] hidden md:block transition-colors duration-200"
-          />
+          <div className="relative z-50 group">
+            <div className="relative inline-block">
+              <FontAwesomeIcon
+                icon={faBell}
+                className="text-lg md:text-xl cursor-pointer hover:text-[#247cff] hidden md:block transition-colors duration-200"
+                onClick={messageDropdown}
+              />
+              {notification && notification?.length > 0 && (
+                <span className="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full -top-1 -right-1">
+                  {notification?.length}
+                </span>
+              )}
+            </div>
+            {isMessageDropdown && (
+              <div className="absolute right-0 mt-2 bg-white border rounded-lg shadow-lg w-96 max-h-[500px] overflow-y-auto">
+                {notification && notification?.length > 0 && (
+                    <div className='flex items-center justify-between p-2'>
+                      <h1></h1>
+                      <button className='px-3 py-1 bg-gray-300 rounded-md shadow-md hover:bg-gray-400'
+                        onClick={() => removeAllNotification(userId!)}
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  )}
+                {notification && notification?.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">No notifications</div>
+                ) : (
+                  notification?.map((data) => (
+                    <NotificationItem
+                      key={data?._id}
+                      notification={data}
+                    />
+                  ))
+                )}
+              </div>
+            )}
+          </div>
           <Link to={`/profile/${userId}`}>
             <img
               src={userInfo?.profileImage || '/profile.webp'}
@@ -124,9 +177,8 @@ const Header:React.FC = () => {
 
       {/* Improved Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-themeColor w-64 transform transition-transform duration-300 ease-in-out z-50 ${
-          isSideBarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 h-full bg-themeColor w-64 transform transition-transform duration-300 ease-in-out z-50 ${isSideBarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         {/* Logo section inside sidebar */}
         <div className="flex items-center justify-between p-5 border-b border-gray-700">

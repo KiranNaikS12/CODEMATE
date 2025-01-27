@@ -143,5 +143,9 @@ export const AuthMessages = {
     FAILED_TO_FETCH_CALL_HISTORY:'Failed to fetch call history',
     CHAPTER_NOT_FOUND:'Chapter does not exists in a course',
     VIDEO_NOT_FOUND:'Video does not exists in a course',
-    COURSE_PROGRESS_UPDATED: 'Course progress updated successfully'
+    COURSE_PROGRESS_UPDATED: 'Course progress updated successfully',
+    NOTIFICATION_LISTED_SUCCESSFULLY: 'Notification listed successfully',
+    NOTIFICATION_NOT_FOUND: 'Notfication not found',
+    NOTIFICATION_REMOVE_SUCCESSFULLY: 'Notification remove successfully',
+    NOTIFICATION_CLEARTED_SUCCESSFULLY: 'All notification cleared successfully'
 };      

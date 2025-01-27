@@ -4,7 +4,6 @@ import { IMessage } from "../../types/messageTypes";
 import { CustomError } from "../../utils/customError";
 import { AuthMessages } from "../../utils/message";
 import { HttpStatusCode } from "../../utils/httpStatusCode";
-import { CloudinaryService } from "../../config/cloudinaryConfig";
 import { IUserRepository } from "../../repositories/user/IUserRepository";
 import { ITutorRepository } from "../../repositories/tutor/ITutorRepository";
 import { IUser } from "../../types/userTypes";
@@ -13,17 +12,22 @@ import { randomStrings } from '../../utils/randomeCourseName';
 import { IMessageService } from "./IMessageService";
 import { CallStatus, ICallHistory } from "../../types/videoCallHistoryTypes";
 import { ICallHistoryRepository } from "../../repositories/callHistroy/ICallHistoryRepository";
+import { INotificationRepository } from "../../repositories/notifications/INotificationRepository";
 
 
 @injectable()
 export class MessageService implements IMessageService {
     constructor(
         @inject('MessageRepository') private MessageRepository: IMessageRepository,
-        @inject('CloudinaryService') private CloudinaryService: CloudinaryService,
         @inject('UserRepository') private UserRepository: IUserRepository,
         @inject('TutorRepository') private TutorRepository: ITutorRepository,
-        @inject('CallHistoryRepository') private CallHistoryRepository: ICallHistoryRepository
+        @inject('CallHistoryRepository') private CallHistoryRepository: ICallHistoryRepository,
+        @inject('NotificationRepository') private NotificationRepository: INotificationRepository
     ) { }
+
+    private extractName(entity: IUser | ITutor): string {
+        return (entity as any).fullname || (entity as any).username || 'Unknown';
+    }
 
     async resolveUserOrTutor(id: string): Promise<{ type: 'User' | 'Tutor'; data: IUser | ITutor } | null> {
 
@@ -44,6 +48,7 @@ export class MessageService implements IMessageService {
             throw new CustomError(AuthMessages.USERS_NOT_FOUND, HttpStatusCode.NOT_FOUND);
         }
 
+        const notfiication = await this.createNotification(sender, receiver, text)
         const uniqueId = randomStrings(10)
 
         return {
@@ -76,9 +81,7 @@ export class MessageService implements IMessageService {
         })
 
         message.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-
         return message;
-
     }
 
     async markMessageAsRead(senderId: string, receiverId: string): Promise<void> {
@@ -86,6 +89,16 @@ export class MessageService implements IMessageService {
         const update = { $set: { read: true } }
 
         await this.MessageRepository.updateMany(filter, update);
+    }
+
+    async MarkMessageNotification(senderId: string, receiverId: string): Promise<void> {
+        const filter = { 
+            senderId: receiverId, 
+            receiverId: senderId, 
+            messageStatus: false 
+        };
+        const update = { $set: { messageStatus: true } };
+        await this.NotificationRepository.updateMany(filter, update);
     }
 
     async prepareCallHistory(receiverId: string, senderId: string, callStatus: CallStatus,): Promise<Partial<ICallHistory>> {
@@ -100,7 +113,7 @@ export class MessageService implements IMessageService {
             senderId,
             senderType: sender.type,
             receiverId,
-            receiverType: receiver.type,    
+            receiverType: receiver.type,
             callStatus,
             timestamp: new Date().toISOString(),
         };
@@ -108,9 +121,8 @@ export class MessageService implements IMessageService {
 
     async createCallHistory(callData: Partial<ICallHistory>): Promise<ICallHistory> {
         try {
-        return await this.CallHistoryRepository.create(callData);
+            return await this.CallHistoryRepository.create(callData);
         } catch (error) {
-            console.log(error)
             throw new CustomError(AuthMessages.FAILED_TO_SAVE_CALL_HISTORY, HttpStatusCode.INTERNAL_SERVER_ERROR)
         }
     }
@@ -142,7 +154,7 @@ export class MessageService implements IMessageService {
                         { receiverId: senderId }
                     ]
                 };
-    
+
             const callHistory = await this.CallHistoryRepository.find(query);
             return callHistory.sort((a, b) =>
                 new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -150,6 +162,24 @@ export class MessageService implements IMessageService {
         } catch (error) {
             throw new CustomError(AuthMessages.FAILED_TO_FETCH_CALL_HISTORY, HttpStatusCode.INTERNAL_SERVER_ERROR)
         }
+    }
+
+    private async createNotification(sender: { type: 'User' | 'Tutor', data: IUser | ITutor },
+        receiver: { type: 'User' | 'Tutor', data: IUser | ITutor },
+        text?: string): Promise<void> {
+        const senderName = this.extractName(sender.data);
+        const receiverName = this.extractName(receiver.data);
+
+        await this.NotificationRepository.create({
+            senderType: sender.type,
+            receiverType: receiver.type,
+            senderName: senderName,
+            ReceiverName: receiverName,
+            senderId: sender.data._id.toString(),
+            receiverId: receiver.data._id.toString(),
+            text: text || 'New Message',
+            messageStatus: false
+        });
     }
 
 }

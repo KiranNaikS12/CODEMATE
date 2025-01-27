@@ -32,7 +32,7 @@ const ListTutor: React.FC = () => {
   const { data: tutorDetails, isLoading, isError: isDetailError, refetch: tutoRefetch } = useGetTutorByIdQuery(selectedId || '');
   const dispatch = useDispatch();
   const currentuser = useSelector((state: RootState) => state.tutor.tutorInfo)
-  
+
 
   useEffect(() => {
 
@@ -108,10 +108,10 @@ const ListTutor: React.FC = () => {
     <span
       key={`${tutor._id}-status`}
       className={`px-2 py-1 rounded-full  text-xs ${!tutor.isVerified
-          ? 'text-yellow-500'
-          : tutor.isApproved
-            ? 'text-green-600'
-            : 'text-red-700'
+        ? 'text-yellow-500'
+        : tutor.isApproved
+          ? 'text-green-600'
+          : 'text-red-700'
         }`}
     >
       {!tutor.isVerified
@@ -158,7 +158,7 @@ const ListTutor: React.FC = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="w-full p-2 mb-4 bg-white border rounded-lg shadow-xl border-customGrey md:w-1/2 focus:outline-none focus:border-hoverColor"
       />
-      
+
       <Table
         headers={headers}
         data={tutorRows}
@@ -170,6 +170,43 @@ const ListTutor: React.FC = () => {
         isDetailError={isDetailError}
         refetch={tutoRefetch}
       />
+
+      <div className='flex items-center justify-between max-w-5xl mt-4'>
+        <div>
+          <select
+            className="px-3 py-2 border border-gray-400 rounded-lg shadow-none bg-customGrey focus:outline-none focus:border-hoverColor"
+          >
+            {[8, 12].map((size) => (
+              <option key={size} value={size}>
+                Show {size} rows per page
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center justify-center gap-x-2">
+          {/* previous */}
+          <button
+            className={`px-4 py-2 bg-gray-300 rounded-md opacity-50 cursor-not-allowed
+           `}
+          >
+            Previous
+          </button>
+
+          <div className="flex gap-2">
+            <button
+              className={`px-4 py-2 rounded-md bg-blue-500 text-white `}
+            >
+              1
+            </button>
+          </div>
+          {/* next */}
+          <button
+            className={`px-4 py-2 bg-gray-300 rounded-md opacity-50 cursor-not-allowed`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </>
   );
 };

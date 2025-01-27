@@ -1,4 +1,4 @@
-import mongoose, { Model, Document } from 'mongoose';
+import  { Model, Document } from 'mongoose';
 import { inject, injectable } from 'inversify';
 import { BaseRepository } from '../base/baseRepository';
 import { ICallHistoryRepository } from './ICallHistoryRepository';

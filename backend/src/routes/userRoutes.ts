@@ -15,6 +15,7 @@ import { WalletController } from '../controllers/wallet/walletController';
 import { ReviewController } from '../controllers/courseReview/reviewController';
 import { FeedbackController } from '../controllers/problemFeedback/feedbackController';
 import { ManageUserController } from '../controllers/admin/manageUserController';
+import { NotificationController } from '../controllers/notificationController/notificationController';
 
 
 const router = express.Router();
@@ -30,6 +31,7 @@ const manageWalletController = container.get<WalletController>('WalletController
 const mangageReviewController = container.get<ReviewController>('ReviewController');
 const manageFeedBackController = container.get<FeedbackController>('FeedbackController');
 const manageUserController = container.get<ManageUserController>('ManageUserController');
+const manageNotificationController = container.get<NotificationController>('NotificationController');
 const cloudinaryService = new CloudinaryService();
 
 
@@ -85,6 +87,9 @@ router.get('/list-user/:userId', protectRole([Role.User]), authMiddleware, (req,
 router.get('/get-count', protectRole([Role.User]), authMiddleware, (req,res) => manageProblemController.getTotalProblemCounts(req,res));
 router.get('/get-stats/:id', protectRole([Role.User]), authMiddleware, (req,res) => userProfileController.getDashboardStats(req,res));
 router.get('/tutor/:tutorId', protectRole([Role.User]), authMiddleware, (req,res) => manageTutorController.displayTutorDetails(req,res));
-router.put('/course/progress', protectRole([Role.User]), authMiddleware, (req,res) => manageCourseController.updateUserCourseProgress(req,res))
+router.put('/course/progress', protectRole([Role.User]), authMiddleware, (req,res) => manageCourseController.updateUserCourseProgress(req,res));
+router.get('/notification/:id', protectRole([Role.User]), authMiddleware, (req,res) => manageNotificationController.getUserNotification(req,res));
+router.delete('/remove/notification', protectRole([Role.User]), authMiddleware, (req,res) => manageNotificationController.removeNotification(req,res))
+router.delete('/clear/notifications', protectRole([Role.User]), authMiddleware, (req,res) => manageNotificationController.clearAllUserNotification(req,res))
 
 export default router;

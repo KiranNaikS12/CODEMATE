@@ -9,6 +9,7 @@ import { TutorProfileController } from '../controllers/tutor/tutorProfileControl
 import { CourseController } from '../controllers/course/courseController';
 import upload from '../config/multerConig';
 import { ManageEnrolledUserController } from '../controllers/tutor/manageUserController';
+import { NotificationController } from '../controllers/notificationController/notificationController';
 
 
 const router = express.Router();
@@ -16,7 +17,8 @@ const authController = container.get<AuthController>('AuthController');
 const tutorController = container.get<TutorApprovalController>('TutorApprovalController');
 const tutorProfileController = container.get<TutorProfileController>('TutorProfileController');
 const manageCourseController = container.get<CourseController>('CourseController');
-const manageUserController = container.get<ManageEnrolledUserController>('ManageEnrolledUserController')
+const manageUserController = container.get<ManageEnrolledUserController>('ManageEnrolledUserController');
+const manageNotificationController = container.get<NotificationController>('NotificationController')
 
 const addTutorRole = (req:Request, res:Response, next:NextFunction) => {
     req.body.roleId = Role.Tutor;
@@ -47,6 +49,8 @@ router.get('/list-course/', authMiddleware, (req,res) => manageCourseController.
 router.get('/my-course/:id', authMiddleware, (req,res) => manageCourseController.listMyCourse(req,res));
 router.patch('/update-status/:id', authMiddleware, (req,res) => manageCourseController.updateCourseStatus(req,res));
 router.get('/get-students/:id', authMiddleware, (req,res) => manageUserController.listEnrolledUser(req,res))
-
+router.get('/notification/:id', authMiddleware, (req,res) => manageNotificationController.getTutorNotification(req,res));
+router.delete('/remove/notification', authMiddleware, (req,res) => manageNotificationController.removeNotification(req,res));
+router.delete('/clear/notifications', authMiddleware, (req,res) => manageNotificationController.clearAllTutorNotification(req,res))
 
 export default router;

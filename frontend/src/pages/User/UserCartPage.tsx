@@ -28,8 +28,6 @@ const UserCartPage:React.FC = () => {
   
   //handleRemoveItemsFromCart
   const handleRemoveCart = async(userId:string, itemId: string ) => {
-    console.log("userId", userId);
-    console.log("itemId", itemId)
     try {
          const response = await removeItem({userId, itemId}).unwrap();
          if(response) {

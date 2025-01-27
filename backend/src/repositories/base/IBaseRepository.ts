@@ -9,5 +9,6 @@ export interface IBaseRepository<T extends Document> {
     update(id: string, data: Partial<T> | Partial<T>) : Promise<T | null>;
     delete(id: string) : Promise<boolean>
     setModel(newModel: Model<T>): void;
+    deleteMany(filter: FilterQuery<T>): Promise<boolean>
     updateMany(filter: Record<string, any>, update: Record<string, any>) : Promise<any>
 }

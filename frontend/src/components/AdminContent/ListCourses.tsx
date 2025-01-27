@@ -131,6 +131,42 @@ const ListCourses: React.FC = () => {
                     </div>
                 )}
             </div>
+            <div className='flex items-center justify-between max-w-5xl mt-4'>
+                <div>
+                    <select
+                        className="px-3 py-2 border border-gray-400 rounded-lg shadow-none bg-customGrey focus:outline-none focus:border-hoverColor"
+                    >
+                        {[8, 12].map((size) => (
+                            <option key={size} value={size}>
+                                Show {size} rows per page
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex items-center justify-center gap-x-2">
+                    {/* previous */}
+                    <button
+                        className={`px-4 py-2 bg-gray-300 rounded-md opacity-50 cursor-not-allowed
+           `}
+                    >
+                        Previous
+                    </button>
+
+                    <div className="flex gap-2">
+                        <button
+                            className={`px-4 py-2 rounded-md bg-blue-500 text-white `}
+                        >
+                            1
+                        </button>
+                    </div>
+                    {/* next */}
+                    <button
+                        className={`px-4 py-2 bg-gray-300 rounded-md opacity-50 cursor-not-allowed`}
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }

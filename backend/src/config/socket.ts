@@ -103,6 +103,7 @@ export class SocketServiceClass {
 
         try {
           await this.messageService.markMessageAsRead(senderId, receiverId);
+          await this.messageService.MarkMessageNotification(senderId, receiverId)
 
           // Broadcast read status to both users in the room
           this.io?.to(room).emit("messages_read_status", {

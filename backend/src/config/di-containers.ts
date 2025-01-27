@@ -119,7 +119,13 @@ import { ICallHistory } from "../types/videoCallHistoryTypes";
 import callHistroyModel from "../models/callHistroyModel";
 import { ICallHistoryRepository } from "../repositories/callHistroy/ICallHistoryRepository";
 import { CallHistoryRepository } from "../repositories/callHistroy/callHistoryRepository";
-
+import { INotification } from "../types/notificationTypes";
+import notificationModel from "../models/notificationModel";
+import { INotificationRepository } from "../repositories/notifications/INotificationRepository";
+import { NotificationRepository } from "../repositories/notifications/notificationRepository";
+import { INotificationService } from "../services/notificationService/INotificationService";
+import { NotificationService } from "../services/notificationService/notificationService";
+import { NotificationController } from "../controllers/notificationController/notificationController";
 
 
 const container = new Container();
@@ -142,7 +148,8 @@ container.bind<mongoose.Model<IReview>>('ReviewModel').toConstantValue(reviewMod
 container.bind<mongoose.Model<IFeedback>>('FeedbackModel').toConstantValue(feedbackModel);
 container.bind<mongoose.Model<IProblemReview>>('ProblemReviewModel').toConstantValue(problemReviewModel);
 container.bind<mongoose.Model<IMessage>>('MessageModel').toConstantValue(messageModel);
-container.bind<mongoose.Model<ICallHistory>>('callHistroyModel').toConstantValue(callHistroyModel)
+container.bind<mongoose.Model<ICallHistory>>('callHistroyModel').toConstantValue(callHistroyModel);
+container.bind<mongoose.Model<INotification>>('NotificationModel').toConstantValue(notificationModel);
 
 // Repositories
 container.bind<IAuthRepository>('AuthRepository').to(AuthRepository);
@@ -158,7 +165,8 @@ container.bind<IReviewRepository>('ReviewRepository').to(ReviewRepository);
 container.bind<IFeedbackRepository>('FeedbackRepository').to(FeedbackRepository);
 container.bind<IProblemReviewRepository>('ProblemReviewRepository').to(ProblemReviewRepository);
 container.bind<IMessageRepository>('MessageRepository').to(MessageRepository);
-container.bind<ICallHistoryRepository>('CallHistoryRepository').to(CallHistoryRepository)
+container.bind<ICallHistoryRepository>('CallHistoryRepository').to(CallHistoryRepository);
+container.bind<INotificationRepository>('NotificationRepository').to(NotificationRepository)
 
 // Services
 container.bind<IEmailService>('EmailService').to(EmailService); 
@@ -183,7 +191,8 @@ container.bind<IReviewService>('ReviewService').to(ReviewService);
 container.bind<IProblemFeedbackService> ('ProblemFeedbackService').to(ProblemFeedbackService); 
 container.bind<IMessageService>("MessageService").to(MessageService); 
 container.bind<SocketServiceClass>('SocketService').to(SocketServiceClass);
-container.bind<ITutorRelated>('ManageEnrolledUser').to(ManageEnrolledUser) 
+container.bind<ITutorRelated>('ManageEnrolledUser').to(ManageEnrolledUser);
+container.bind<INotificationService>('NotificationService').to(NotificationService);
 
 // Controllers
 container.bind<AuthController>('AuthController').to(AuthController);
@@ -202,6 +211,7 @@ container.bind<WalletController>('WalletController').to(WalletController);
 container.bind<ReviewController>('ReviewController').to(ReviewController);
 container.bind<FeedbackController>('FeedbackController').to(FeedbackController);
 container.bind<ManageEnrolledUserController>('ManageEnrolledUserController').to(ManageEnrolledUserController);
+container.bind<NotificationController>('NotificationController').to(NotificationController);
 
 
 export { container };

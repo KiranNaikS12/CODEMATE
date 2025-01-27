@@ -49,6 +49,11 @@ export abstract class BaseRepository<T extends Document> implements IBaseReposit
         return result !== null;
     }
 
+    async deleteMany(filter: FilterQuery<T>): Promise<boolean> {
+        const result = await this.model.deleteMany(filter).exec();
+        return result.deletedCount > 0;
+    }
+
     async updateMany(filter: Record<string, any>, update:Record<string, any>) : Promise<any> {
         return this.model.updateMany(filter,update)
     }

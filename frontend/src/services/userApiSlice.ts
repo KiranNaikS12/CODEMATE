@@ -9,6 +9,7 @@ import { FilteredDataForHistory, showEnrolledCourseResponse, showOrderDetailsRes
 import { showWalletDetailsResponse } from "../types/walletTypes";
 import { showProblemReviewListResponse, showReviewListResponse } from "../types/reviewTypes";
 import { ShowProblemFeedbackResponse } from "../types/feedbackTypes";
+import { showNotificationResponse } from "../types/notificationTypes";
 
 
 export const apiSlice = createApi({
@@ -17,7 +18,7 @@ export const apiSlice = createApi({
        baseUrl: import.meta.env.VITE_BASE_URL,
        credentials: 'include'
     }),
-    tagTypes: ['User','Wallet','Course','Problem', 'Feedback', 'ProblemReview','Cart'],
+    tagTypes: ['User','Wallet','Course','Problem', 'Feedback', 'ProblemReview','Cart', 'Notification'],
     endpoints: (builder) => ({
        register:builder.mutation({ 
         query: (data) => ({
@@ -363,7 +364,30 @@ export const apiSlice = createApi({
           method:'PUT',
           body: progressData,
         })
-      })
+      }),
+      getNotification: builder.query<showNotificationResponse, {id: string}>({
+        query: ({id}) => ({
+          url:`/users/notification/${id}`,
+          method:'GET',
+        }),
+        providesTags:['Notification']
+      }),
+      removeNotification: builder.mutation({
+        query: (notificationId) => ({
+          url:`/users/remove/notification`,
+          method:'DELETE',
+          body: notificationId
+        }),
+        invalidatesTags:['Notification']
+      }),
+      clearAllNotification: builder.mutation({
+        query: (userId) => ({
+          url:'/users/clear/notifications',
+          method:'DELETE',
+          body: userId
+        }),
+        invalidatesTags: ['Notification']
+    })
     }),
 
 });
@@ -416,7 +440,10 @@ export const {
     useGetProblemCountQuery,
     useGetDashboardStatsQuery,
     useViewTutorDataQuery,
-    useTrackVideoProgressMutation
+    useTrackVideoProgressMutation,
+    useGetNotificationQuery,
+    useRemoveNotificationMutation,
+    useClearAllNotificationMutation,
 
 } = apiSlice;
 
