@@ -7,13 +7,11 @@ import { FilterOptions, IChapter, ICourse, ICourseData, IVideo, VideoUploadInfo 
 import { getSignedUrl, uploadToS3 } from "../../config/s3";
 import { ITutorRepository } from "../../repositories/tutor/ITutorRepository";
 import { randomStrings } from "../../utils/randomeCourseName";
-import { IOrder, IOrderResponse, IPopulatedOrder } from "../../types/orderTypes";
+import {  IOrderResponse, IPopulatedOrder } from "../../types/orderTypes";
 import { IPaymentRepository } from "../../repositories/payment/IPaymentRepository";
 import { IUserRepository } from "../../repositories/user/IUserRepository";
 import { ICourseService } from "./ICourseService";
 import { CourseProgress, IUser, RequestedCourseProgressData } from "types/userTypes";
-import { progress } from "@nextui-org/react";
-
 
 
 @injectable()
