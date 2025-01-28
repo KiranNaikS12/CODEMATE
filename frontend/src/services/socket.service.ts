@@ -19,10 +19,6 @@ class SocketService {
       this.isConnecting = true;
       console.log("Attempting to connect to socket...");
 
-
-      this.isConnecting = true;
-      console.log("Attempting to connect to socket...");
-
       this.socket = io(import.meta.env.VITE_BASE_URL, {
         withCredentials: true,
         transports: ["websocket", "polling"],
