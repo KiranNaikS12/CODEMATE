@@ -54,7 +54,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isOpen, onClose, receiver
         await socketService.connect(senderId!._id);
         // Join room when receiverId is available
         if (receiverId) {
-          // console.log("receiverId", receiverId)
           socketService.joinRoom(senderId!._id, receiverId);
 
           //mark message has read
