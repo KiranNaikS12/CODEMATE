@@ -57,12 +57,15 @@ const ListTutor: React.FC = () => {
       const result = await Swal.fire({
         title: `Are you sure you want to ${action} this tutor?`,
         text: `This action will ${action} the tutor's account.`,
-        icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
+        position: 'top',
         cancelButtonColor: '#d33',
         confirmButtonText: `Yes, ${action} it!`,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        customClass: {
+          popup: 'rounded-lg shadow-lg  border border-green-500 text-center'
+        },
       });
 
       if (result.isConfirmed) {

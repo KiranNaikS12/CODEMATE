@@ -57,12 +57,15 @@ const ListUsers: React.FC = () => {
       const result = await Swal.fire({
         title: `Are you sure you want to ${action} this user?`,
         text: `This action will ${action} the user's account.`,
-        icon: 'warning',
         showCancelButton: true,
+        position: 'top',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: `Yes, ${action} it!`,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        customClass: {
+          popup: 'rounded-lg shadow-lg  border border-green-500 text-center'
+        },
       });
 
       if (result.isConfirmed) {
