@@ -30,7 +30,6 @@ export class TokenBlacklistService implements ITokenBlacklistService {
     async addToBlacklist(token: string): Promise<void> {
         try {
             const decoded = jwt.decode(token) as DecodedToken;
-            // console.log('Decoding token:', decoded);
             if (!decoded || !decoded.exp) {
                 throw new CustomError(AuthMessages.INVALID_TOKEN, HttpStatusCode.BAD_REQUEST);
             }
@@ -45,10 +44,8 @@ export class TokenBlacklistService implements ITokenBlacklistService {
                 `1`,
                 'PX',
                 ttl
-            )
-            console.log('token added to blacklist', blacklisted);   
+            ) 
         } catch (error) {
-            console.log('Error adding token to blacklist', error);
             throw new CustomError(AuthMessages.ERROR_BLACKLISTING_TOKEN, HttpStatusCode.BAD_REQUEST);
         }
     }
@@ -59,7 +56,6 @@ export class TokenBlacklistService implements ITokenBlacklistService {
             const exists = await this.redis.exists(`${this.KEY_PREFIX}${token}`)
             return exists === 1;
         } catch (error) {
-            console.log('Error checking blacklisted token:', error);
             return true;
         }
     }
