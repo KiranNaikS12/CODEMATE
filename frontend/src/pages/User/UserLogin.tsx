@@ -18,7 +18,7 @@ const UserLogin: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-
+  //Desktop view for login page
   const DesktopView = () => (
     <div className="relative min-h-screen p-4 bg-customGrey">
       <div className="absolute -left-40 -top-64 w-[120vh] h-[120vh] bg-themeColor rounded-full" />
@@ -43,6 +43,7 @@ const UserLogin: React.FC = () => {
     </div>
   );
 
+  //Mobile view for login page
   const MobileView = () => (
     <div className="relative w-full min-h-screen overflow-hidden bg-customGrey">
       <div className="absolute -left-1/4 -top-2 w-[150vw] h-[50vh] bg-themeColor rounded-b-[100%]" />

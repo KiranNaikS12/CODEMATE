@@ -91,7 +91,7 @@ const UserRegistrations: React.FC = () => {
   };
 
 
-
+  //Desktop view for registration page
   const DesktopView = () => (
     <div className="relative min-h-screen p-4 bg-customGrey ">
       <div className="absolute -left-40 -top-64 w-[120vh] h-[120vh] bg-themeColor rounded-full" />
@@ -106,9 +106,9 @@ const UserRegistrations: React.FC = () => {
             </p>
           </div>
           <div className="relative flex items-center justify-center w-1/2 -top-10">
-            <UserRegisterForm           
+            <UserRegisterForm
               isMobile={isMobile}
-              onSubmit = {handleSubmit}
+              onSubmit={handleSubmit}
             />
           </div>
         </div>
@@ -116,6 +116,7 @@ const UserRegistrations: React.FC = () => {
     </div>
   );
 
+  //Mobile view for registration page
   const MobileView = () => (
     <div className="relative w-full min-h-screen overflow-hidden bg-customGrey">
       <div className="absolute -left-1/4 -top-2 w-[150vw] h-[50vh] bg-themeColor rounded-b-[100%]" />
@@ -127,7 +128,7 @@ const UserRegistrations: React.FC = () => {
         </p>
         <UserRegisterForm
           isMobile={isMobile}
-          onSubmit = {handleSubmit}
+          onSubmit={handleSubmit}
         />
       </div>
     </div>
