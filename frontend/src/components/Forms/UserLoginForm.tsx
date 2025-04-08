@@ -44,7 +44,8 @@ const UserLoginForm:React.FC<LoginFormProps> = ({ onPasswordModal, onMobileView}
         }
     }, [navigate, userInfo]);
 
-
+    
+    //Function to handle form submit
     const handleSubmit = async (data: FormData) => {
         try {
             const response = await login(data).unwrap();
@@ -59,6 +60,7 @@ const UserLoginForm:React.FC<LoginFormProps> = ({ onPasswordModal, onMobileView}
         }
     };
 
+     //Function to handle google singIn
     const handleGoogleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
@@ -84,6 +86,7 @@ const UserLoginForm:React.FC<LoginFormProps> = ({ onPasswordModal, onMobileView}
         }
     };
 
+    // Toggle visibility for password
     const togglePasswordVisibility = useCallback(() => {
         setShowPassword(prev => !prev);
     }, []);

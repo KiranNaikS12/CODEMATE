@@ -42,6 +42,7 @@ const UserRegistrations: React.FC = () => {
     return () => window.removeEventListener("reset", checkMobile);
   }, []);
 
+  // Function handle form submit
   const handleSubmit = async (data: FormData) => {
     try {
       const response = await initiateRegistration(data).unwrap();
@@ -61,13 +62,15 @@ const UserRegistrations: React.FC = () => {
     }
   };
 
-
+  //Function for resending otp
   const handleResendOTP = async () => {
     if (formData) {
       await handleSubmit(formData);
     }
   };
 
+  
+  //Function for handling otp
   const handleOtpSubmit = async (otp: string) => {
     try {
       const response = await verifyUser({
