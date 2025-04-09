@@ -5,6 +5,7 @@ import {  UserAdditional } from "../../types/userTypes";
 import { ProblemStats } from "../../types/problemTypes";
 
 
+
 interface RadialChartProps {
     user: UserAdditional;
     problemCount: ProblemStats;
@@ -77,9 +78,7 @@ const RadialChart: React.FC<RadialChartProps> = ({ user, problemCount }) => {
                 {hasData ? (
                     <Chart options={chartOptions} series={chartSeries} type="radialBar" height={180} />
                 ) : (
-                    <div className="flex items-center justify-center w-full h-40 text-gray-600 bg-gray-200">
-                        No Data Available
-                    </div>
+                    <span></span>
                 )}
                 {hasData && (
                     <div className="flex flex-col py-4 space-y-4">

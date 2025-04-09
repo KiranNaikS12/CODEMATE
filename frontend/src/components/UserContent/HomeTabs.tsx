@@ -26,7 +26,7 @@ const HomeTabs: React.FC<HomeTabsProps> = ({user}) => {
 
 
     return (
-        <div className="mt-2">
+        <div className="mt-2 mb-10">
             <div className="flex px-6 space-x-8 border-b border-gray-300 md:px-0">
                 <button
                     className={`py-2 text-lg font-medium ${
