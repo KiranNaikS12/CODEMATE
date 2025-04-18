@@ -17,4 +17,4 @@ const AuthButton: React.FC<ButtonProps> = ({text, className}) => {
   )
 }
 
-export default AuthButton
+export default React.memo(AuthButton)

@@ -14,4 +14,4 @@ const CommonButton: React.FC<Button> = ({buttonText, className, onClick}) => {
   )
 }
 
-export default CommonButton
+export default React.memo(CommonButton)
