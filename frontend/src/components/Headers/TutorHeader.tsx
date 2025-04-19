@@ -133,4 +133,4 @@ const TutorHeader: React.FC<TutorHeaderProps> = ({ toggleSearch, isSearchOpen })
   );
 };
 
-export default TutorHeader;
+export default React.memo(TutorHeader);

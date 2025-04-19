@@ -32,4 +32,4 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ toggleSidebar }) => {
   );
 };
 
-export default AdminHeader;
+export default React.memo(AdminHeader);

@@ -112,4 +112,4 @@ const CustomProblemHeader: React.FC<CustomProblemHeader> = ({editorInstance, lan
     );
 };
 
-export default CustomProblemHeader
+export default React.memo(CustomProblemHeader)

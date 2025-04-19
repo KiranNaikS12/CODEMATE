@@ -43,4 +43,4 @@ const AuthHeaders:React.FC<Header> = ({linkText, linkTo, linkClassName}) => {
   )
 }
 
-export default AuthHeaders
+export default React.memo(AuthHeaders)
