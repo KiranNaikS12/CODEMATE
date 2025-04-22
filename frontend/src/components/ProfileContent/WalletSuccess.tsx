@@ -140,4 +140,4 @@ const WalletSuccess: React.FC = () => {
   );
 };
 
-export default WalletSuccess;
+export default React.memo(WalletSuccess);

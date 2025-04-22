@@ -61,4 +61,4 @@ const WalletFailure:React.FC = () => {
   )
 }
 
-export default WalletFailure
+export default React.memo(WalletFailure)

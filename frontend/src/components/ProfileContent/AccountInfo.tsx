@@ -226,4 +226,4 @@ const AccountInfo: React.FC<AccountInfoProps> = ({ userId, userData }) => {
   );
 };
 
-export default AccountInfo;
+export default React.memo(AccountInfo);

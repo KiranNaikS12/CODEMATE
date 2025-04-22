@@ -344,4 +344,4 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ userId }) => {
     );
 };
 
-export default WalletInfo;
+export default React.memo(WalletInfo);

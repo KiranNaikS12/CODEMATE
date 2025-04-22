@@ -259,4 +259,4 @@ const PaymentHistory: React.FC<PaymentHistroyProps> = ({ userId }) => {
     );
   };
   
-  export default PaymentHistory;
+  export default React.memo(PaymentHistory);

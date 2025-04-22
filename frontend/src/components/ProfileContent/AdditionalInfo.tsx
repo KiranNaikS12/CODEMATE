@@ -253,4 +253,4 @@ const AdditionalInfo: React.FC<AdditionalInfoProps> = ({userId, userData}) => {
   );
 };
 
-export default AdditionalInfo;
+export default React.memo(AdditionalInfo);
